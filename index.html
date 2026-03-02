@@ -212,7 +212,7 @@
             font-size: 0.85em;
             font-style: italic;
             margin-left: 0.5rem;
-            user-select: none; /* Prevents selecting the translation when copying the Chinese text */
+            user-select: none;
         }
 
         /* Keywords Layout */
@@ -270,7 +270,7 @@
             <p>写作格式指南</p>
         </div>
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Search structures (e.g., Email, 报告)...">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search structures...">
         </div>
         <ul class="nav-list" id="navList">
             </ul>
@@ -294,7 +294,7 @@
                 </div>
 
                 <div>
-                    <div class="section-label">Essential Keywords & Phrases</div>
+                    <div class="section-label">Essential Formatting Notes</div>
                     <div class="keywords-grid" id="displayKeywords">
                         </div>
                 </div>
@@ -303,210 +303,158 @@
     </main>
 
     <script>
-        // Data populated with inline HTML spans for greyed-out translations
         const textTypesData = [
+    {
+        id: 'email',
+        enTitle: 'Email',
+        zhTitle: '电邮',
+        description: 'Electronic correspondence. Unlike most formats, the name sign-off remains left aligned.',
+        structure: '收件人: ... <span class="translation">(To:)</span>\n发件人: ... <span class="translation">(From:)</span>\n主题: ... <span class="translation">(Subject:)</span>\n日期: ... <span class="translation">(Date:)</span>\n\n称呼: <span class="translation">(Greeting:)</span>\n\n　　正文 <span class="translation">(Body - indented)</span>\n\n祝好！ <span class="translation">(Wishes)</span>\n\n姓名 <span class="translation">(Name - left aligned)</span>',
+        keywords: [
+            { zh: '正文缩进', en: 'Body indented' },
+            { zh: '姓名靠左', en: 'Name left aligned' }
+        ]
+    },
+    {
+        id: 'notice',
+        enTitle: 'Notice',
+        zhTitle: '通知',
+        description: 'Used to inform a group. Specific event details are indented, while the issuer and date are right aligned.',
+        structure: '<div style="text-align: center; font-weight: bold;">通知 <span class="translation">(Title)</span></div>\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n　　活动时间: ... <span class="translation">(Time - indented)</span>\n　　地点: ... <span class="translation">(Location - indented)</span>\n　　费用: ... <span class="translation">(Fee - indented)</span>\n　　报名方式: ... <span class="translation">(Registration - indented)</span>\n\n<div style="text-align: right;">校办公室 / 名字 <span class="translation">(Office/Name - right aligned)</span></div>\n<div style="text-align: right;">X年X月X日 <span class="translation">(Date - right aligned)</span></div>',
+        keywords: [
+            { zh: '细节缩进', en: 'Details indented' },
+            { zh: '落款靠右', en: 'Sign-off right aligned' }
+        ]
+    },
+    {
+        id: 'broadcast',
+        enTitle: 'Broadcast',
+        zhTitle: '广播',
+        description: 'Script for an audio announcement. Contact details at the end must be right aligned.',
+        structure: '各位听众：\n\n　　大家好！今天广播的内容是... <span class="translation">(Body paragraph - indented)</span>\n\n<div style="text-align: right;">联系人: ... <span class="translation">(Contact - right aligned)</span></div>\n<div style="text-align: right;">电话: ... <span class="translation">(Phone - right aligned)</span></div>',
+        keywords: [
+            { zh: '段落缩进', en: 'Paragraphs indented' },
+            { zh: '联系信息靠右', en: 'Contact info right aligned' }
+        ]
+    },
     {
         id: 'letter',
         enTitle: 'Letter',
         zhTitle: '信',
-        description: 'Informal correspondence focusing on individual experience. Usually expresses the wish to receive a reply in the closing paragraph.',
-        structure: '亲爱的小明: <span class="translation">(Dear Xiaoming:)</span>\n\n你好! <span class="translation">(Hello!)</span>\n\n　　（正文：首行缩进两格）... <span class="translation">(Body: Indent first line by two spaces...)</span>\n\n希望早日收到你的回信。 <span class="translation">(Hope to receive your reply soon. - Closing paragraph)</span>\n\n祝 <span class="translation">(Wish)</span>\n好(/快乐/健康)! <span class="translation">(Well! / Happy! / Healthy!)</span>\n\n杰克 <span class="translation">([Sender Name])</span>\nxxxx年xx月xx日 <span class="translation">(Date: Year Month Day)</span>',
+        description: 'Standard informal correspondence. Greetings and wishes are indented; sign-off and date are right aligned.',
+        structure: '称呼:\n\n　　问候！ <span class="translation">(Greeting - indented)</span>\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n　　祝愿 <span class="translation">(Wishes - indented)</span>\n\n　　祝 <span class="translation">(Wish - indented)</span>\n好！\n\n<div style="text-align: right;">老王 / 名字 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">XX年X月X日 <span class="translation">(Date - right aligned)</span></div>',
         keywords: [
-            { zh: '亲爱的...', en: 'Dear...' },
-            { zh: '回信', en: 'Reply' },
-            { zh: '祝好 / 健康！', en: 'Wish you well / health!' }
-        ]
-    },
-    {
-        id: 'email',
-        enTitle: 'Email',
-        zhTitle: '电子邮件',
-        description: 'Electronic correspondence that requires specific headers including sender, recipient, subject, and date.',
-        structure: '寄件人: 汪小春@hotmail.com <span class="translation">(Sender:...)</span>\n收件人: 李大伟@gmail.com <span class="translation">(Recipient:...)</span>\n主题: 话剧《西游记》 <span class="translation">(Subject: Drama "Journey to the West")</span>\n日期: 二零一二年九月十日 <span class="translation">(Date: September 10, 2012)</span>\n\n亲爱的大伟: <span class="translation">(Dear Dawei:)</span>\n\n你最近好吗? <span class="translation">(How have you been recently?)</span>\n\n　　（正文）... <span class="translation">(Body...)</span>\n\n希望你能来! <span class="translation">(Hope you can come!)</span>\n\n汪小春 <span class="translation">([Sender Name])</span>',
-        keywords: [
-            { zh: '寄件人 / 收件人', en: 'Sender / Recipient' },
-            { zh: '主题 / 日期', en: 'Subject / Date' },
-            { zh: '你最近好吗？', en: 'How have you been recently?' }
-        ]
-    },
-    {
-        id: 'diary',
-        enTitle: 'Diary Entry',
-        zhTitle: '日记',
-        description: 'A deeply personal text recounting daily events. The top line must include the date, day of the week, and weather.',
-        structure: '十一月二十七日  星期三  晴 <span class="translation">(November 27th | Wednesday | Sunny)</span>\n\n　　今天是我的生日... <span class="translation">(Today is my birthday... - Indent first line by two spaces, use first-person)</span>\n　　...',
-        keywords: [
-            { zh: '晴 / 阴 / 雨', en: 'Sunny / Overcast / Rain (Weather)' },
-            { zh: '星期...', en: 'Day of the week' },
-            { zh: '今天', en: 'Today' }
-        ]
-    },
-    {
-        id: 'essay',
-        enTitle: 'Essay',
-        zhTitle: '文章',
-        description: 'Standard multi-paragraph text focusing on informing or describing a subject, such as a person or an event.',
-        structure: '（标题 - 可选）我的妈妈 <span class="translation">(Title - Optional: My Mother)</span>\n\n　　我的妈妈叫玛丽,她今年四十五岁。她长得很漂亮... <span class="translation">(My mother is named Mary, she is 45 years old. She is very beautiful... - Introduction)</span>\n\n　　妈妈最近喜欢写博客... <span class="translation">(Mother recently likes writing a blog... - Body paragraph 1)</span>\n\n　　妈妈是个很热情的人... <span class="translation">(Mother is a very enthusiastic person... - Body paragraph 2)</span>\n\n　　我爱我的妈妈,我觉得她是个很不错的人。 <span class="translation">(I love my mother, I think she is a very nice person. - Conclusion)</span>',
-        keywords: [
-            { zh: '最近', en: 'Recently' },
-            { zh: '我觉得', en: 'I think / I feel' },
-            { zh: '因为', en: 'Because' }
+            { zh: '问候缩进', en: 'Greeting indented' },
+            { zh: '落款靠右', en: 'Sign-off right aligned' }
         ]
     },
     {
         id: 'speech',
         enTitle: 'Speech',
         zhTitle: '演讲稿',
-        description: 'Persuasive text relying on a clear opening greeting to the audience and a concluding thank-you.',
-        structure: '老师们、同学们: <span class="translation">(Teachers, Students:)</span>\n大家好! <span class="translation">(Hello everyone!)</span>\n\n　　我们在日常生活中就可以... <span class="translation">(In our daily lives we can... - Arguments/Points)</span>\n\n　　同学们,如果我们现在不... <span class="translation">(Students, if we do not currently... - Call to Action)</span>\n谢谢大家! <span class="translation">(Thank you all!)</span>',
+        description: 'A persuasive address. Opening greetings and closing thanks must be properly indented.',
+        structure: '尊敬的听众们：\n\n　　大家好！ <span class="translation">(Hello everyone! - indented)</span>\n\n　　今天我演讲的题目是... <span class="translation">(Body paragraph - indented)</span>\n\n　　谢谢大家！ <span class="translation">(Thank you all! - indented)</span>',
         keywords: [
-            { zh: '老师们、同学们...', en: 'Teachers, Students...' },
-            { zh: '大家好！', en: 'Hello everyone!' },
-            { zh: '谢谢大家！', en: 'Thank you all!' }
+            { zh: '大家好缩进', en: '"Hello everyone" indented' },
+            { zh: '谢谢大家缩进', en: '"Thank you" indented' }
         ]
     },
     {
         id: 'report',
         enTitle: 'Report',
         zhTitle: '报告',
-        description: 'A formal text addressed to an authority figure, stating a clear situation or problem. Must include contact information if requesting a follow-up.',
-        structure: '尊敬的警察先生: <span class="translation">(Respected Mr. Policeman:)</span>\n\n　　我是一个到苏州来旅游的英国人... <span class="translation">(I am a British tourist in Suzhou... - State facts clearly)</span>\n\n　　如果有人捡到,请联系我。我的电话是... 非常感谢! <span class="translation">(If anyone finds it, please contact me. My phone number is... Thank you very much!)</span>\n\nJames Thomas <span class="translation">([Your Name])</span>\n四月二十日 <span class="translation">([Date])</span>',
+        description: 'A formal document. The author\'s name and date are aligned to the right.',
+        structure: '标题：\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n<div style="text-align: right;">Jane\'s Thomas / 名字 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
         keywords: [
-            { zh: '尊敬的...', en: 'Respected...' },
-            { zh: '请联系我', en: 'Please contact me' },
-            { zh: '非常感谢', en: 'Thank you very much' }
+            { zh: '段落缩进', en: 'Paragraphs indented' },
+            { zh: '落款靠右', en: 'Sign-off right aligned' }
         ]
     },
     {
-        id: 'note',
-        enTitle: 'Note',
-        zhTitle: '便条',
-        description: 'Used for brief communicative acts. Structure is minimal, requiring only the recipient, core message, sender, and date.',
-        structure: '李老师: <span class="translation">(Teacher Li:)</span>\n\n　　你好!今天下午... <span class="translation">(Hello! This afternoon... - Core message)</span>\n\n王太太 <span class="translation">(Mrs. Wang - Sender)</span>\n七月二十六日 <span class="translation">(July 26th - Date)</span>',
+        id: 'proposal',
+        enTitle: 'Proposal / Initiative',
+        zhTitle: '倡议书',
+        description: 'A call to action. Situation, initiative, and appeals are indented; organizers are right aligned.',
+        structure: '<div style="text-align: center; font-weight: bold;">倡议书 <span class="translation">(Title)</span></div>\n\n大家：\n\n　　现状说明... <span class="translation">(Current situation - indented)</span>\n\n　　倡议内容... <span class="translation">(Initiative - indented)</span>\n\n　　呼吁大家行动起来... <span class="translation">(Call to action - indented)</span>\n\n<div style="text-align: right;">小组 / 发起人名字 <span class="translation">(Group/Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
         keywords: [
-            { zh: '你好！', en: 'Hello!' },
-            { zh: '请假', en: 'Ask for leave' },
-            { zh: '谢谢！', en: 'Thank you!' }
-        ]
-    },
-    {
-        id: 'announcement',
-        enTitle: 'Announcement',
-        zhTitle: '通知',
-        description: 'Used to inform a group about an event or policy. Must include specific details like time, location, participants, and fees.',
-        structure: '（标题：居中）书法班招生 <span class="translation">(Title: Calligraphy Class Enrollment)</span>\n\n　　为了让同学们学习中国字... <span class="translation">(In order to let students learn Chinese characters... - Purpose)</span>\n\n活动时间: 每周三下午三点半 <span class="translation">(Activity Time: Every Wednesday 3:30 PM)</span>\n活动地点: 中文教室 <span class="translation">(Activity Location: Chinese Classroom)</span>\n参加学生: 六到十年级学生 <span class="translation">(Participants: Grade 6 to 10 students)</span>\n费用: 一百元 <span class="translation">(Fee: 100 Yuan)</span>\n\n有兴趣的同学,请找王老师报名。 <span class="translation">(Interested students, please contact Teacher Wang to register.)</span>\n\n中文办公室 <span class="translation">(Chinese Office - Organizer)</span>\n八月二十八日 <span class="translation">(August 28th - Date)</span>',
-        keywords: [
-            { zh: '活动时间 / 地点', en: 'Activity Time / Location' },
-            { zh: '报名', en: 'Sign up / Register' },
-            { zh: '费用', en: 'Fee / Cost' }
+            { zh: '现状与倡议缩进', en: 'Situation & initiative indented' },
+            { zh: '落款靠右', en: 'Sign-off right aligned' }
         ]
     },
     {
         id: 'poster',
         enTitle: 'Poster',
         zhTitle: '海报',
-        description: 'Visually engaging format used for public education or promotion. Uses bullet points and impactful headings.',
-        structure: '（大标题）怎样爱护牙齿: <span class="translation">(Headline: How to care for your teeth:)</span>\n\n爱护牙齿,从今天做起 <span class="translation">(Care for your teeth, starting today - Subtitle/Slogan)</span>\n\n★ 少吃零食,如:蛋糕、巧克力等 <span class="translation">(★ Eat fewer snacks, such as: cakes, chocolates, etc.)</span>\n★ 早晚刷牙 <span class="translation">(★ Brush teeth morning and night)</span>\n★ 注意饮食 <span class="translation">(★ Pay attention to diet)</span>\n★ 每年都去看牙医 <span class="translation">(★ Go to the dentist every year)</span>\n\n口腔健康教育热线 44559291 <span class="translation">(Oral Health Education Hotline: 44559291 - Contact info)</span>',
+        description: 'Event promotion. Crucial details like time, location, and fees must be indented.',
+        structure: '<div style="text-align: center; font-size: 1.5em; font-weight: bold;">活动主题 <span class="translation">(Title)</span></div>\n\n　　正文介绍... <span class="translation">(Intro - indented)</span>\n\n　　时间: ... <span class="translation">(Time - indented)</span>\n　　地点: ... <span class="translation">(Location - indented)</span>\n　　门票 / 费用: ... <span class="translation">(Ticket/Fee - indented)</span>\n　　报名: ... <span class="translation">(Registration - indented)</span>\n　　联络人/电话: ... <span class="translation">(Contact/Phone - indented)</span>',
         keywords: [
-            { zh: '★', en: 'Bullet points' },
-            { zh: '从今天做起', en: 'Starting today' },
-            { zh: '热线', en: 'Hotline' }
+            { zh: '活动细节缩进', en: 'Event details indented' }
         ]
     },
     {
-        id: 'advertisement',
-        enTitle: 'Advertisement',
-        zhTitle: '广告',
-        description: 'Used to sell goods or services. Highlights the items, prices, and contact information clearly.',
-        structure: '（标题）二手书广告 <span class="translation">(Title: Second-hand Book Advertisement)</span>\n\n　　我有很多中文书,包括小说、杂志... <span class="translation">(I have many Chinese books, including novels, magazines... - Description of items)</span>\n　　现在我要搬家了,每件二手物品都卖三元。 <span class="translation">(Now I am moving, every second-hand item is sold for three yuan. - Reason and Price)</span>\n　　如果你有兴趣,可以和我联系。 <span class="translation">(If you are interested, you can contact me. - Call to action)</span>\n\n联系人: 李小明 <span class="translation">(Contact Person: Li Xiaoming)</span>\n电话: 45889034 <span class="translation">(Phone: 45889034)</span>',
+        id: 'note',
+        enTitle: 'Note',
+        zhTitle: '便条',
+        description: 'A brief, informal message. Name and date aligned to the right.',
+        structure: '收条人：\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n<div style="text-align: right;">王大 / 名字 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
         keywords: [
-            { zh: '二手', en: 'Second-hand' },
-            { zh: '有兴趣', en: 'Interested' },
-            { zh: '联系人 / 电话', en: 'Contact Person / Phone' }
-        ]
-    },
-    {
-        id: 'postcard',
-        enTitle: 'Postcard',
-        zhTitle: '明信片',
-        description: 'A condensed informal letter focusing on a single location/event. Layout requires a simulated address block with zip codes and recipient/sender markers like (收) and (寄).',
-        structure: '小花: <span class="translation">(Xiaohua: - Recipient)</span>\n\n你好!我们一家现在在海南度假... <span class="translation">(Hello! Our family is vacationing in Hainan...)</span>\n希望早日见到你。 <span class="translation">(Hope to see you soon.)</span>\n\n小明 <span class="translation">(Xiaoming)</span>\n八月五日 <span class="translation">(August 5th)</span>\n\n                          100039 <span class="translation">([Recipient Zip Code])</span>\n                          北京太平路二十二号三号楼三零三室 <span class="translation">([Recipient Address])</span>\n                          李小花 (收) <span class="translation">(Li Xiaohua [To Receive])</span>\n\n                          海南 王小明 (寄) <span class="translation">(Hainan, Wang Xiaoming [Sender])</span>\n                          570001 <span class="translation">([Sender Zip Code])</span>',
-        keywords: [
-            { zh: '(收) / (寄)', en: '(Receive) / (Send)' },
-            { zh: '度假', en: 'Vacation' },
-            { zh: '希望早日见到你', en: 'Hope to see you soon' }
-        ]
-    },
-    {
-        id: 'news_report',
-        enTitle: 'News Report',
-        zhTitle: '新闻报道',
-        description: 'Objective journalistic writing covering a recent event. Must include a headline, reporter details, a lead paragraph (who, what, when, where), and body paragraphs explaining why and how with quotes.',
-        structure: '[标题: 吸引人的题目] <span class="translation">(Title: Catchy headline)</span>\n\n记者 [姓名]　[地点]　[日期]　[星期] <span class="translation">(Reporter: [Name] | [Location] | [Date] | [Day of the week])</span>\n\n　　[导语段: 包含谁、什么、时间、地点]... <span class="translation">(Lead paragraph: Includes who, what, when, where...)</span>\n\n　　[正文段: 详细说明"为什么"和"怎么"，包含至少一个引用语]... <span class="translation">(Body paragraph: Explains "why" and "how" in detail, includes at least one quote...)</span>\n\n　　[补充信息: 观众可能想知道的其他细节]... <span class="translation">(Supplementary info: Other details the audience might want to know...)</span>',
-        keywords: [
-            { zh: '记者', en: 'Reporter / Journalist' },
-            { zh: '采访', en: 'Interview' },
-            { zh: '据报道', en: 'It is reported that...' }
+            { zh: '正文缩进', en: 'Body indented' },
+            { zh: '落款靠右', en: 'Sign-off right aligned' }
         ]
     },
     {
         id: 'article',
-        enTitle: 'Magazine/Newspaper Article',
-        zhTitle: '杂志/报纸文章',
-        description: 'An informative or opinionated piece for a publication. Uses a hook to engage readers, well-structured body paragraphs with supporting details, and a strong concluding call to action or summary.',
-        structure: '[标题: 抓人眼球的题目] <span class="translation">(Title: Eye-catching headline)</span>\n\n作者: [姓名]　[日期] <span class="translation">(Author: [Name] | [Date])</span>\n\n　　[开头段: 使用"钩子"吸引读者，介绍基本背景信息]... <span class="translation">(Introduction: Uses a "hook" to attract readers, introduces basic background info...)</span>\n\n　　[正文段一: 中心句 + 支持细节/例子 + 呼应中心]... <span class="translation">(Body paragraph 1: Topic sentence + supporting details/examples + echoing the main point...)</span>\n\n　　[正文段二: 中心句 + 支持细节/例子 + 呼应中心]... <span class="translation">(Body paragraph 2: Topic sentence + supporting details/examples + echoing the main point...)</span>\n\n　　[结尾段: 总结观点，表达感受或呼吁行动]... <span class="translation">(Conclusion: Summarizes points, expresses feelings or calls for action...)</span>',
+        enTitle: 'Magazine / Newspaper Article',
+        zhTitle: '杂志，报纸文章',
+        description: 'A published piece. The title, author, and date are all centered at the top.',
+        structure: '<div style="text-align: center; font-size: 1.2em; font-weight: bold;">题目 <span class="translation">(Title - centered)</span></div>\n<div style="text-align: center;">作者 <span class="translation">(Author - centered)</span></div>\n<div style="text-align: center;">日期 <span class="translation">(Date - centered)</span></div>\n\n　　正文段落... <span class="translation">(Body paragraph - indented)</span>',
         keywords: [
-            { zh: '作者', en: 'Author' },
-            { zh: '总之', en: 'In conclusion / In summary' },
-            { zh: '呼吁', en: 'Call to action / Appeal' }
+            { zh: '标题块居中', en: 'Title block centered' },
+            { zh: '段落缩进', en: 'Paragraphs indented' }
         ]
     },
     {
-        id: 'application_letter',
-        enTitle: 'Letter of Application',
-        zhTitle: '申请信',
-        description: 'Formal letter used to apply for a position, program, or opportunity. Clearly states the purpose of the letter, highlights relevant skills and experiences, and requests an interview.',
-        structure: '尊敬的 [先生/女士]: <span class="translation">(Respected [Mr./Ms.]:)</span>\n\n您好! <span class="translation">(Hello!)</span>\n\n　　[自我介绍与写信目的: 我叫...，是...的学生。我写这封信是想申请...]... <span class="translation">(Self-introduction & purpose: My name is..., I am a student at... I am writing this letter to apply for...)</span>\n\n　　[正文段一: 个人能力与优势，首先...]... <span class="translation">(Body paragraph 1: Personal abilities and strengths, firstly...)</span>\n\n　　[正文段二: 相关经验与态度，其次... 最后...]... <span class="translation">(Body paragraph 2: Relevant experience and attitude, secondly... finally...)</span>\n\n　　[结尾: 总结并请求面试机会，总之...]... <span class="translation">(Conclusion: Summarizes and requests an interview opportunity, in short...)</span>\n\n此致 <span class="translation">(With best regards)</span>\n敬礼! <span class="translation">(Sincerely,)</span>\n\n[姓名] <span class="translation">([Name])</span>\n[日期] <span class="translation">([Date])</span>',
+        id: 'interview',
+        enTitle: 'Interview Report',
+        zhTitle: '采访报告',
+        description: 'Transcript of an interview. Q&A and summaries are indented; interviewer info is right aligned.',
+        structure: '<div style="text-align: center; font-weight: bold;">采访题目 <span class="translation">(Title)</span></div>\n\n　　问与答... <span class="translation">(Q&A - indented)</span>\n\n　　总结... <span class="translation">(Summary - indented)</span>\n\n<div style="text-align: right;">姓名 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
         keywords: [
-            { zh: '申请', en: 'Apply / Application' },
-            { zh: '首先 / 其次 / 最后', en: 'Firstly / Secondly / Finally' },
-            { zh: '面试机会', en: 'Interview opportunity' }
+            { zh: '问答缩进', en: 'Q&A indented' },
+            { zh: '落款靠右', en: 'Sign-off right aligned' }
         ]
     },
     {
-        id: 'guideline',
-        enTitle: 'Guideline',
-        zhTitle: '生活指南',
-        description: 'An instructive text offering advice or steps on how to do something. Characterized by a clear introduction, organized subheadings with actionable advice, and a concluding summary.',
-        structure: '[标题: XXX指南] <span class="translation">(Title: XXX Guideline)</span>\n\n　　[开头段: 简要介绍该指南的目的和重要性]... <span class="translation">(Introduction: Briefly introduces the purpose and importance of the guideline...)</span>\n\n一、[小标题: 第一个建议] <span class="translation">(1. [Subheading: First piece of advice])</span>\n　　[具体建议内容: 短小精悍的句子]... <span class="translation">(Specific advice content: Short and concise sentences...)</span>\n\n二、[小标题: 第二个建议] <span class="translation">(2. [Subheading: Second piece of advice])</span>\n　　[具体建议内容]... <span class="translation">(Specific advice content...)</span>\n\n三、[小标题: 第三个建议] <span class="translation">(3. [Subheading: Third piece of advice])</span>\n　　[具体建议内容]... <span class="translation">(Specific advice content...)</span>\n\n　　[结尾段: 总结全文，呼应开头]... <span class="translation">(Conclusion: Summarizes the whole text, echoing the introduction...)</span>',
+        id: 'activity_guide',
+        enTitle: 'Activity Guide',
+        zhTitle: '活动指南',
+        description: 'Step-by-step instructions. Numbers are left aligned, while the actual content and summary are indented.',
+        structure: '<div style="text-align: center; font-weight: bold;">指南题目 <span class="translation">(Title)</span></div>\n\n一、主题一 <span class="translation">(1. Left aligned)</span>\n　　内容... <span class="translation">(Content indented under number)</span>\n\n二、主题二 <span class="translation">(2. Left aligned)</span>\n　　内容... <span class="translation">(Content indented under number)</span>\n\n三、主题三 <span class="translation">(3. Left aligned)</span>\n　　内容... <span class="translation">(Content indented under number)</span>\n\n　　总结... <span class="translation">(Summary - indented)</span>',
         keywords: [
-            { zh: '指南', en: 'Guideline / Guide' },
-            { zh: '建议', en: 'Suggestion / Advice' },
-            { zh: '目的', en: 'Purpose' }
+            { zh: '序号靠左', en: 'Numbers left aligned' },
+            { zh: '内容缩进', en: 'Content indented' }
         ]
     },
     {
         id: 'brochure',
-        enTitle: 'Brochure',
-        zhTitle: '宣传册',
-        description: 'A promotional and informational document, often for tourism or events. Uses clear sections like itinerary, costs, important notices, and contact info, usually formatted with bullet points.',
-        structure: '[标题: 具有吸引力的旅游或活动题目] <span class="translation">(Title: Attractive tourism or event headline)</span>\n\n一、行程安排 <span class="translation">(1. Itinerary)</span>\n* [时间] 在 [地点] 集合 ... <span class="translation">(* [Time] Gather at [Location]...)</span>\n* [时间] 出发前往 [目的地] ... <span class="translation">(* [Time] Depart for [Destination]...)</span>\n* [时间] 参观/游览 [景点内容] ... <span class="translation">(* [Time] Visit/tour [Attractions]...)</span>\n\n二、费用说明 <span class="translation">(2. Cost details)</span>\n* 团费: [金额]/人 ... <span class="translation">(* Tour fee: [Amount]/person...)</span>\n* 费用包括: [交通/门票/午餐] ... <span class="translation">(* Fee includes: [Transportation/Tickets/Lunch]...)</span>\n\n三、注意事项 <span class="translation">(3. Important notices)</span>\n* [提醒内容: 如: 请穿舒适的鞋、注意安全等] ... <span class="translation">(* [Reminders: e.g., Please wear comfortable shoes, pay attention to safety, etc.]...)</span>\n\n四、联系方式 <span class="translation">(4. Contact info)</span>\n* [机构名称] / [地址] / [电话] / [电邮] ... <span class="translation">(* [Organization name] / [Address] / [Phone] / [Email]...)</span>',
+        enTitle: 'Brochure / Layout',
+        zhTitle: '宣传册/排版',
+        description: 'Promotional layout. Includes a designated headline block, left-aligned numbers, and indented subtitles.',
+        structure: '<div style="border: 2px solid var(--ink-black); padding: 8px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.05);">Headline <span class="translation">(In a designated box/block)</span></div>\n\n一、项目一 <span class="translation">(1. Left aligned)</span>\n　　详情 / 小标题... <span class="translation">(Details / Subtitle - indented)</span>\n\n二、项目二 <span class="translation">(2. Left aligned)</span>\n　　详情 / 小标题... <span class="translation">(Details / Subtitle - indented)</span>\n\n三、项目三 <span class="translation">(3. Left aligned)</span>\n　　详情 / 小标题... <span class="translation">(Details / Subtitle - indented)</span>',
         keywords: [
-            { zh: '行程安排', en: 'Itinerary / Schedule' },
-            { zh: '注意事项', en: 'Important notices / Things to note' },
-            { zh: '费用包括', en: 'Fee includes' }
+            { zh: '标题框', en: 'Headline block' },
+            { zh: '小标题缩进', en: 'Subtitles indented' }
         ]
     },
     {
         id: 'social_media',
         enTitle: 'Social Media Post',
         zhTitle: '社交媒体发布',
-        description: 'Notes and messages are used for brief communicative acts, such as leaving a reminder or an invitation to a casual meeting. The structure is minimal, requiring only the name of the recipient, the core message, and the sender’s name with the time of writing, typically ending with social interaction buttons.',
-        structure: '小明: <span class="translation">(Xiaoming: - Recipient)</span>\n\n　　今天下午的篮球比赛改到三点了，别迟到哦！见字如面。 <span class="translation">(The basketball game this afternoon has been moved to 3 PM, don\'t be late!... - Core message, brief and direct)</span>\n\n大伟 <span class="translation">(Dawei - Sender)</span>\n十月十二日 下午一点 <span class="translation">(October 12th, 1:00 PM - Date/Time)</span>\n\n--------------------------------------------------\n👍 点赞 (12)    💬 评论 (3)    ↪️ 分享 / 转发 <span class="translation">(Like | Comment | Share / Forward)</span>',
+        description: 'Digital post formatting. Text is indented, date is right aligned (next to assumed image block), and metadata is left aligned.',
+        structure: '　　文本内容... <span class="translation">(Text content - indented rows)</span>\n　　更多文本... <span class="translation">(More text - indented rows)</span>\n\n<div style="text-align: right; color: var(--ink-light);">日期 <span class="translation">(Date - right aligned next to image block)</span></div>\n\n#话题，@某人，链接 <span class="translation">(Hashtags, mentions, links - left aligned)</span>',
         keywords: [
-            { zh: '点赞', en: 'Like' },
-            { zh: '评论', en: 'Comment' },
-            { zh: '分享 / 转发', en: 'Share / Forward' }
+            { zh: '文本缩进', en: 'Text indented' },
+            { zh: '标签靠左', en: 'Hashtags left aligned' }
         ]
     }
 ];
@@ -557,8 +505,6 @@
             displayZhTitle.textContent = data.zhTitle;
             displayDesc.textContent = data.description;
             
-            // Split by newline and render each line as its own div with a border-bottom rule,
-            // so paper lines never drift out of alignment regardless of text wrapping.
             displayStructure.innerHTML = data.structure
                 .split('\n')
                 .map(line => `<div class="paper-line">${line === '' ? '&nbsp;' : line}</div>`)
