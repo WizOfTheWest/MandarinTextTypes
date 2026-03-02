@@ -450,11 +450,11 @@
         id: 'social_media',
         enTitle: 'Social Media Post',
         zhTitle: '社交媒体发布',
-        description: 'Digital post formatting. Text is indented, date is right aligned (next to assumed image block), and metadata is left aligned.',
-        structure: '　　文本内容... <span class="translation">(Text content - indented rows)</span>\n　　更多文本... <span class="translation">(More text - indented rows)</span>\n\n<div style="text-align: right; color: var(--ink-light);">日期 <span class="translation">(Date - right aligned next to image block)</span></div>\n\n#话题，@某人，链接 <span class="translation">(Hashtags, mentions, links - left aligned)</span>',
+        description: 'Digital post formatting. Date is centered at the top, text is indented, and interaction metrics are centered at the bottom.',
+        structure: '<div style="text-align: center; color: var(--ink-light); font-size: 0.9em; margin-bottom: 8px;">日期 / X年X月X日 <span class="translation">(Date - centered at top)</span></div>\n　　文本内容... <span class="translation">(Text content - indented rows)</span>\n　　更多文本... <span class="translation">(More text - indented rows)</span>\n\n#话题，@某人，链接 <span class="translation">(Hashtags, mentions, links - left aligned)</span>\n\n<div style="text-align: center; border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 10px; font-size: 0.95em;">👍 点赞 (12) &nbsp;&nbsp;&nbsp; 💬 评论 (3) &nbsp;&nbsp;&nbsp; ↪️ 分享 / 转发 <span class="translation">(Likes, Comments, Shares - centered at bottom)</span></div>',
         keywords: [
-            { zh: '文本缩进', en: 'Text indented' },
-            { zh: '标签靠左', en: 'Hashtags left aligned' }
+            { zh: '日期居中', en: 'Date centered top' },
+            { zh: '互动居中', en: 'Interactions centered bottom' }
         ]
     }
 ];
