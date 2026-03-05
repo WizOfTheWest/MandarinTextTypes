@@ -304,6 +304,17 @@
 
     <script>
         const textTypesData = [
+        {
+        id: 'diary',
+        enTitle: 'Diary',
+        zhTitle: '日记',
+        description: 'A personal record of daily events. The date, day of the week, and weather are placed on the first line. Body paragraphs are indented.',
+        structure: 'X月X日 &nbsp;&nbsp;&nbsp;&nbsp; 星期X &nbsp;&nbsp;&nbsp;&nbsp; 天气 <span class="translation">(Date &nbsp; Day &nbsp; Weather - top line)</span>\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n　　更多正文... <span class="translation">(More body text - indented)</span>',
+        keywords: [
+            { zh: '日期/星期/天气', en: 'Date/Day/Weather at top' },
+            { zh: '正文缩进', en: 'Body indented' }
+        ]
+    },
     {
         id: 'email',
         enTitle: 'Email',
