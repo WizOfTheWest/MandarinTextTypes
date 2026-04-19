@@ -1,540 +1,1178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chinese Text Types Reference</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #f4f1eb;
-            --paper-color: #fffdf8;
-            --ink-black: #1a1a1a;
-            --ink-light: #4a4a4a;
-            --vermilion: #c23a22;
-            --border-color: #d1cbb8;
-            --line-height: 36px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文体指南 — IB Mandarin Ab Initio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  :root {
+    --ink:#1C1410; --paper:#F5EDD8; --silk:#E8DFC8;
+    --red:#C0392B; --jade:#2E7D6B; --lacquer:#8B1A1A;
+    --umber:#4A3728; --gold:#D4AC0D; --muted:#9a8a78; --border:#d4c9b0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{zoom:1.35;}
+  html,body,#root{height:100%;}
+  body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;overflow:hidden;}
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:#d0c4a8;border-radius:3px;}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  /* Star bookmark animation */
+  @keyframes starPop{
+    0%  {transform:scale(1) rotate(0deg);}
+    25% {transform:scale(1.9) rotate(-18deg);}
+    55% {transform:scale(0.82) rotate(10deg);}
+    75% {transform:scale(1.2) rotate(-5deg);}
+    100%{transform:scale(1) rotate(0deg);}
+  }
+  @keyframes starGlow{
+    0%  {filter:drop-shadow(0 0 0px transparent);}
+    40% {filter:drop-shadow(0 0 8px #D4AC0DAA) drop-shadow(0 0 16px #D4AC0D55);}
+    100%{filter:drop-shadow(0 0 0px transparent);}
+  }
+  @keyframes bookmarkSlide{
+    from{opacity:0;transform:translateY(-12px) scale(0.93);}
+    to  {opacity:1;transform:translateY(0) scale(1);}
+  }
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(8px);}
+    to  {opacity:1;transform:translateY(0);}
+  }
+  .star-pop{animation:starPop 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards, starGlow 0.55s ease forwards;}
+  .bm-enter{animation:bookmarkSlide 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+  .fade-up{animation:fadeUp 0.22s ease forwards;}
 
-        body {
-            font-family: 'Playfair Display', serif;
-            background-color: var(--bg-color);
-            color: var(--ink-black);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-        }
-
-        /* Sidebar Layout */
-        .sidebar {
-            width: 350px;
-            background-color: var(--bg-color);
-            border-right: 2px solid var(--ink-black);
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.03);
-        }
-
-        .header {
-            padding: 2rem;
-            border-bottom: 2px solid var(--ink-black);
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.2rem;
-            color: var(--vermilion);
-        }
-
-        .search-container {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            font-family: inherit;
-            font-size: 1rem;
-            background: transparent;
-            border: 1px solid var(--ink-light);
-            border-radius: 0;
-            color: var(--ink-black);
-            transition: all 0.3s ease;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: var(--vermilion);
-            box-shadow: 4px 4px 0px var(--vermilion);
-        }
-
-        .nav-list {
-            flex-grow: 1;
-            overflow-y: auto;
-            list-style: none;
-        }
-
-        .nav-item {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .nav-item:hover {
-            background-color: rgba(194, 58, 34, 0.05);
-            padding-left: 2rem;
-        }
-
-        .nav-item.active {
-            background-color: var(--ink-black);
-            color: var(--bg-color);
-            border-color: var(--ink-black);
-        }
-
-        .nav-item.active .zh-title {
-            color: var(--bg-color);
-            opacity: 0.8;
-        }
-
-        .en-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .zh-title {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 0.9rem;
-            color: var(--ink-light);
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex-grow: 1;
-            padding: 3rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .manuscript-container {
-            width: 100%;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .content-header {
-            border-bottom: 4px double var(--ink-black);
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .content-title {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .content-zh-title {
-            font-family: 'Noto Serif SC', serif;
-            color: var(--vermilion);
-            font-size: 1.5rem;
-        }
-
-        .description {
-            font-style: italic;
-            color: var(--ink-light);
-            line-height: 1.6;
-            font-size: 1.1rem;
-        }
-
-        .section-label {
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.85rem;
-            color: var(--vermilion);
-            margin-bottom: 1rem;
-            display: inline-block;
-            border-bottom: 1px solid var(--vermilion);
-            padding-bottom: 0.2rem;
-        }
-
-        /* Structure Layout */
-        .structure-block {
-            background-color: var(--paper-color);
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            position: relative;
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
-        }
-
-        .manuscript-paper {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.2rem;
-            color: var(--ink-black);
-        }
-
-        .paper-line {
-            min-height: var(--line-height);
-            border-bottom: 1px solid var(--border-color);
-            line-height: var(--line-height);
-            padding-bottom: 2px;
-            word-break: break-word;
-        }
-
-        /* Translation Styling */
-        .translation {
-            color: #888888;
-            font-family: 'Playfair Display', serif;
-            font-size: 0.85em;
-            font-style: italic;
-            margin-left: 0.5rem;
-            user-select: none;
-        }
-
-        /* Keywords Layout */
-        .keywords-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .keyword-tag {
-            border: 1px solid var(--ink-black);
-            padding: 0.5rem 1rem;
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.1rem;
-            background: transparent;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .keyword-tag:hover {
-            background: var(--ink-black);
-            color: var(--bg-color);
-        }
-
-        .keyword-translation {
-            font-family: 'Playfair Display', serif;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            font-style: italic;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-color);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--ink-light);
-        }
-
-    </style>
+  button{font-family:'DM Sans',sans-serif;}
+  .copy-btn:hover{opacity:0.75;}
+  .sidebar-btn:hover{background:rgba(255,255,255,0.45)!important;}
+</style>
 </head>
 <body>
+<div id="root"></div>
+<script type="text/babel">
+const C={
+  ink:'#1C1410', paper:'#F5EDD8', silk:'#E8DFC8',
+  red:'#C0392B', jade:'#2E7D6B', lacquer:'#8B1A1A',
+  umber:'#4A3728', gold:'#D4AC0D', muted:'#9a8a78', border:'#d4c9b0',
+};
 
-    <aside class="sidebar">
-        <div class="header">
-            <h1>Text Types</h1>
-            <p>写作格式指南</p>
-        </div>
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Search structures...">
-        </div>
-        <ul class="nav-list" id="navList">
-            </ul>
-    </aside>
+// ─── Layout line kinds ──────────────────────────────────────────────────────
+// { k:'3col', l, c, r }       three-column row (left / center / right)
+// { k:'right', t }            right-aligned
+// { k:'left',  t }            left-aligned (default)
+// { k:'center',t }            centered
+// { k:'indent',t }            body paragraph, indented 2em (Chinese standard)
+// { k:'blank' }               empty line spacer
+// { k:'divider'}              thin hr
+// { k:'field', label, t }     header field  label: value
+// { k:'bullet',t }            bullet-list item
+// { k:'qa', role, t, isQ }    interview Q&A line
+// Each line may carry { note } shown in the format-rules overlay
 
-    <main class="main-content">
-        <div class="manuscript-container">
-            <div class="content-header">
-                <h2 class="content-title" id="displayEnTitle">Select a Text Type</h2>
-                <h3 class="content-zh-title" id="displayZhTitle">请选择文章类型</h3>
-            </div>
-            
-            <p class="description" id="displayDesc">Use the search bar or the list on the left to explore formatting conventions.</p>
+const TEXT_TYPES=[
+  // ─── 1. 日记 ────────────────────────────────────────────────────────────────
+  {
+    id:'diary', char:'记', zhName:'日记', pinyin:'rìjì', enName:'Diary Entry', color:C.umber,
+    tagline:'Personal daily journal — private, reflective, first-person',
+    formatRules:[
+      'First line: date (left-aligned) | day of week (centered) | weather (right-aligned)',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'Use first person (我) throughout',
+      'No greeting or signature required',
+      'End with a reflection or plan for tomorrow',
+    ],
+    layout:[
+      {k:'3col', l:'2026年4月19日', c:'星期日', r:'天气：晴', note:'Date · Day · Weather — one line, three columns'},
+      {k:'blank'},
+      {k:'indent', t:'今天是一个非常特别的日子！我和家人去了一个中国文化节，我们看了舞龙表演，真的很精彩！', note:'Body paragraph — indented 2 chars'},
+      {k:'blank'},
+      {k:'indent', t:'上午我们先去了一个书法展览，我尝试写了自己的名字，虽然写得不太好，但是老师说我进步很快。下午我们吃了很多中国食物，比如包子和春卷，味道太好了！'},
+      {k:'blank'},
+      {k:'indent', t:'我觉得今天非常开心，因为我学到了很多关于中国文化的知识。我希望下次还能参加这样的活动。'},
+      {k:'blank'},
+      {k:'indent', t:'明天我打算把今天学到的汉字练习一下。', note:'Reflection / plan for tomorrow'},
+    ],
+    phrases:[
+      {zh:'今天是……', pinyin:'Jīntiān shì…', en:'Today is…'},
+      {zh:'我觉得……，因为……', pinyin:'Wǒ juéde…, yīnwèi…', en:'I feel… because…'},
+      {zh:'首先……然后……最后……', pinyin:'Shǒuxiān… ránhòu… zuìhòu…', en:'First… then… finally…'},
+      {zh:'真的很……', pinyin:'Zhēn de hěn…', en:'It was really…'},
+      {zh:'我希望……', pinyin:'Wǒ xīwàng…', en:'I hope…'},
+      {zh:'明天我打算……', pinyin:'Míngtiān wǒ dǎsuàn…', en:'Tomorrow I plan to…'},
+      {zh:'这让我……', pinyin:'Zhè ràng wǒ…', en:'This made me…'},
+      {zh:'虽然……但是……', pinyin:'Suīrán… dànshì…', en:'Although… but…'},
+    ],
+    checklist:[
+      {zh:'日期行', en:'Header: date (left) | day (center) | weather (right)'},
+      {zh:'天气', en:'Weather noted on the first line'},
+      {zh:'第一人称', en:'Consistent use of 我 throughout'},
+      {zh:'缩进', en:'Each paragraph\'s first line indented 2 Chinese chars'},
+      {zh:'段落空行', en:'Blank line between every paragraph'},
+      {zh:'感受', en:'Personal feelings expressed (我觉得 / 我感到)'},
+      {zh:'时间词', en:'Time markers used (早上 / 下午 / 晚上)'},
+      {zh:'结尾', en:'Reflection or plan for tomorrow at the end'},
+    ],
+  },
 
-            <div id="contentBody" style="display: none; width: 100%; flex-direction: column; gap: 2rem;">
-                <div>
-                    <div class="section-label">Structural Layout</div>
-                    <div class="structure-block">
-                        <div class="manuscript-paper" id="displayStructure"></div>
-                    </div>
-                </div>
+  // ─── 2. 信 ──────────────────────────────────────────────────────────────────
+  {
+    id:'letter', char:'信', zhName:'信', pinyin:'xìn', enName:'Letter', color:C.red,
+    tagline:'Formal or informal written letter',
+    formatRules:[
+      'Greeting left-aligned at margin: 亲爱的XX，',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'Closing phrase right-aligned: 你的朋友， / 此致敬礼，',
+      'Name right-aligned below closing phrase',
+      'Date right-aligned at bottom in YYYY年MM月DD日 format',
+    ],
+    layout:[
+      {k:'left', t:'亲爱的小红，', note:'Greeting — left-aligned, ends with comma'},
+      {k:'blank'},
+      {k:'indent', t:'你好！好久不见，最近怎么样？我非常想念你！', note:'Body paragraph — indented 2 chars'},
+      {k:'blank'},
+      {k:'indent', t:'上个月我们学校举办了一个文化节，我学会了包饺子。你知道吗，饺子非常好吃！我想以后教你怎么做。'},
+      {k:'blank'},
+      {k:'indent', t:'你今年暑假有什么计划？我希望我们能在假期见面。'},
+      {k:'blank'},
+      {k:'indent', t:'期待你的回信！'},
+      {k:'blank'},
+      {k:'right', t:'你的朋友，', note:'Closing — right-aligned'},
+      {k:'right', t:'小明', note:'Name — right-aligned, below closing'},
+      {k:'right', t:'2026年04月19日', note:'Date — bottom right (YYYY年MM月DD日)'},
+    ],
+    phrases:[
+      {zh:'好久不见', pinyin:'Hǎojiǔ bù jiàn', en:'Long time no see'},
+      {zh:'我非常想念你', pinyin:'Wǒ fēicháng xiǎngniàn nǐ', en:'I miss you very much'},
+      {zh:'我想跟你说……', pinyin:'Wǒ xiǎng gēn nǐ shuō…', en:'I want to tell you…'},
+      {zh:'希望收到你的回信', pinyin:'Xīwàng shōudào nǐ de huí xìn', en:'Hope to hear back from you soon'},
+      {zh:'此致敬礼', pinyin:'Cǐ zhì jìng lǐ', en:'Yours respectfully (formal)'},
+      {zh:'你永远的朋友', pinyin:"Nǐ yǒngyuǎn de péngyǒu", en:'Your forever friend'},
+      {zh:'最近怎么样？', pinyin:'Zuìjìn zěnmeyàng?', en:'How have you been lately?'},
+      {zh:'我写信是想……', pinyin:'Wǒ xiě xìn shì xiǎng…', en:'I am writing because I want to…'},
+    ],
+    checklist:[
+      {zh:'称呼', en:'Greeting left-aligned (亲爱的... / 敬启者)'},
+      {zh:'目的', en:'Reason for writing stated early'},
+      {zh:'正文缩进', en:'Each paragraph\'s first line indented 2 characters'},
+      {zh:'段落空行', en:'Blank line between paragraphs'},
+      {zh:'结束语', en:'Closing phrase right-aligned'},
+      {zh:'署名', en:'Name right-aligned below closing'},
+      {zh:'日期（信尾）', en:'Date bottom right: YYYY年MM月DD日'},
+    ],
+  },
 
-                <div>
-                    <div class="section-label">Essential Formatting Notes</div>
-                    <div class="keywords-grid" id="displayKeywords">
-                        </div>
-                </div>
-            </div>
-        </div>
-    </main>
+  // ─── 3. 电子邮件 ─────────────────────────────────────────────────────────────
+  {
+    id:'email', char:'邮', zhName:'电子邮件', pinyin:'diànzǐ yóujiàn', enName:'Email', color:C.jade,
+    tagline:'Electronic written communication',
+    formatRules:[
+      'Email header fields left-aligned: From (发件人), To (收件人), Date (日期), Subject (主题)',
+      'Divider line separates header from body',
+      'Greeting left-aligned at margin: 尊敬的XX，',
+      'Body paragraphs indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'Closing phrase left-aligned (unlike letters — do not right-align)',
+      'Name left-aligned below closing phrase',
+    ],
+    layout:[
+      {k:'field', label:'发件人：', t:'wang.ming@school.edu', note:'From — left-aligned header fields'},
+      {k:'field', label:'收件人：', t:'li.laoshi@school.edu'},
+      {k:'field', label:'日　期：', t:'2026年4月19日'},
+      {k:'field', label:'主　题：', t:'关于下周的汉语文化节活动', note:'Subject line'},
+      {k:'divider', note:'Divider separates header from body'},
+      {k:'left', t:'尊敬的李老师，', note:'Greeting — left-aligned (no indent)'},
+      {k:'blank'},
+      {k:'indent', t:'您好！我写信是想询问一下下周的汉语文化节活动。我非常感兴趣，想了解更多信息。', note:'Body — indented 2 chars'},
+      {k:'blank'},
+      {k:'indent', t:'请问活动什么时候开始？需要提前报名吗？我可以带朋友一起来吗？'},
+      {k:'blank'},
+      {k:'indent', t:'期待您的回复，谢谢！'},
+      {k:'blank'},
+      {k:'left', t:'祝好，', note:'Closing — left-aligned (unlike letters)'},
+      {k:'left', t:'王明', note:'Name — left-aligned'},
+    ],
+    phrases:[
+      {zh:'我写信是为了……', pinyin:'Wǒ xiě xìn shì wèile…', en:'I am writing to…'},
+      {zh:'请问……', pinyin:'Qǐngwèn…', en:'May I ask…'},
+      {zh:'非常感谢您的帮助', pinyin:'Fēicháng gǎnxiè nín de bāngzhù', en:'Thank you very much for your help'},
+      {zh:'期待您的回复', pinyin:'Qīdài nín de huífù', en:'Looking forward to your reply'},
+      {zh:'如有任何问题，请联系我', pinyin:'Rú yǒu rènhé wèntí, qǐng liánxì wǒ', en:'If you have any questions, contact me'},
+      {zh:'此致敬礼', pinyin:'Cǐ zhì jìng lǐ', en:'Yours sincerely (formal close)'},
+      {zh:'祝你快乐', pinyin:'Zhù nǐ kuàilè', en:'Wishing you happiness (informal)'},
+      {zh:'我想了解更多关于……的信息', pinyin:'Wǒ xiǎng liǎojiě gèng duō guānyú… de xìnxī', en:'I would like more information about…'},
+    ],
+    checklist:[
+      {zh:'发件人', en:'From field included (发件人：)'},
+      {zh:'收件人', en:'To field included (收件人：)'},
+      {zh:'日期', en:'Date field included (日期：)'},
+      {zh:'主题', en:'Subject line written (主题：)'},
+      {zh:'称呼', en:'Greeting left-aligned (尊敬的... / 亲爱的...)'},
+      {zh:'目的', en:'Purpose stated clearly in opening'},
+      {zh:'正文缩进', en:'Body paragraphs indented 2 characters'},
+      {zh:'段落空行', en:'One blank line between paragraphs'},
+      {zh:'结束语', en:'Closing phrase left-aligned (祝好 / 期待回复)'},
+      {zh:'署名', en:'Name signed at end — left-aligned'},
+    ],
+  },
 
-    <script>
-        const textTypesData = [
-        {
-        id: 'diary',
-        enTitle: 'Diary',
-        zhTitle: '日记',
-        description: 'A personal record of daily events. The date, day of the week, and weather are placed on the first line. Body paragraphs are indented.',
-        structure: 'X月X日 &nbsp;&nbsp;&nbsp;&nbsp; 星期X &nbsp;&nbsp;&nbsp;&nbsp; 天气 <span class="translation">(Date &nbsp; Day &nbsp; Weather - top line)</span>\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n　　更多正文... <span class="translation">(More body text - indented)</span>',
-        keywords: [
-            { zh: '日期/星期/天气', en: 'Date/Day/Weather at top' },
-            { zh: '正文缩进', en: 'Body indented' }
-        ]
-    },
-    {
-        id: 'email',
-        enTitle: 'Email',
-        zhTitle: '电邮',
-        description: 'Electronic correspondence. Unlike most formats, the name sign-off remains left aligned.',
-        structure: '收件人: ... <span class="translation">(To:)</span>\n发件人: ... <span class="translation">(From:)</span>\n主题: ... <span class="translation">(Subject:)</span>\n日期: ... <span class="translation">(Date:)</span>\n\n称呼: <span class="translation">(Greeting:)</span>\n\n　　正文 <span class="translation">(Body - indented)</span>\n\n祝好！ <span class="translation">(Wishes)</span>\n\n姓名 <span class="translation">(Name - left aligned)</span>',
-        keywords: [
-            { zh: '正文缩进', en: 'Body indented' },
-            { zh: '姓名靠左', en: 'Name left aligned' }
-        ]
-    },
-    {
-        id: 'notice',
-        enTitle: 'Notice',
-        zhTitle: '通知',
-        description: 'Used to inform a group. Specific event details are indented, while the issuer and date are right aligned.',
-        structure: '<div style="text-align: center; font-weight: bold;">通知 <span class="translation">(Title)</span></div>\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n　　活动时间: ... <span class="translation">(Time - indented)</span>\n　　地点: ... <span class="translation">(Location - indented)</span>\n　　费用: ... <span class="translation">(Fee - indented)</span>\n　　报名方式: ... <span class="translation">(Registration - indented)</span>\n\n<div style="text-align: right;">校办公室 / 名字 <span class="translation">(Office/Name - right aligned)</span></div>\n<div style="text-align: right;">X年X月X日 <span class="translation">(Date - right aligned)</span></div>',
-        keywords: [
-            { zh: '细节缩进', en: 'Details indented' },
-            { zh: '落款靠右', en: 'Sign-off right aligned' }
-        ]
-    },
-    {
-        id: 'broadcast',
-        enTitle: 'Broadcast',
-        zhTitle: '广播',
-        description: 'Script for an audio announcement. Contact details at the end must be right aligned.',
-        structure: '各位听众：\n\n　　大家好！今天广播的内容是... <span class="translation">(Body paragraph - indented)</span>\n\n<div style="text-align: right;">联系人: ... <span class="translation">(Contact - right aligned)</span></div>\n<div style="text-align: right;">电话: ... <span class="translation">(Phone - right aligned)</span></div>',
-        keywords: [
-            { zh: '段落缩进', en: 'Paragraphs indented' },
-            { zh: '联系信息靠右', en: 'Contact info right aligned' }
-        ]
-    },
-    {
-        id: 'letter',
-        enTitle: 'Letter',
-        zhTitle: '信',
-        description: 'Standard informal correspondence. Greetings and wishes are indented; sign-off and date are right aligned.',
-        structure: '称呼:\n\n　　问候！ <span class="translation">(Greeting - indented)</span>\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n　　祝愿 <span class="translation">(Wishes - indented)</span>\n\n　　祝 <span class="translation">(Wish - indented)</span>\n好！\n\n<div style="text-align: right;">老王 / 名字 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">XX年X月X日 <span class="translation">(Date - right aligned)</span></div>',
-        keywords: [
-            { zh: '问候缩进', en: 'Greeting indented' },
-            { zh: '落款靠右', en: 'Sign-off right aligned' }
-        ]
-    },
-    {
-        id: 'speech',
-        enTitle: 'Speech',
-        zhTitle: '演讲稿',
-        description: 'A persuasive address. Opening greetings and closing thanks must be properly indented.',
-        structure: '尊敬的听众们：\n\n　　大家好！ <span class="translation">(Hello everyone! - indented)</span>\n\n　　今天我演讲的题目是... <span class="translation">(Body paragraph - indented)</span>\n\n　　谢谢大家！ <span class="translation">(Thank you all! - indented)</span>',
-        keywords: [
-            { zh: '大家好缩进', en: '"Hello everyone" indented' },
-            { zh: '谢谢大家缩进', en: '"Thank you" indented' }
-        ]
-    },
-    {
-        id: 'report',
-        enTitle: 'Report',
-        zhTitle: '报告',
-        description: 'A formal document. The author\'s name and date are aligned to the right.',
-        structure: '标题：\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n<div style="text-align: right;">大卫 / 名字 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
-        keywords: [
-            { zh: '段落缩进', en: 'Paragraphs indented' },
-            { zh: '落款靠右', en: 'Sign-off right aligned' }
-        ]
-    },
-    {
-        id: 'proposal',
-        enTitle: 'Proposal / Initiative',
-        zhTitle: '倡议书',
-        description: 'A call to action. Situation, initiative, and appeals are indented; organizers are right aligned.',
-        structure: '<div style="text-align: center; font-weight: bold;">倡议书 <span class="translation">(Title)</span></div>\n\n大家：\n\n　　现状说明... <span class="translation">(Current situation - indented)</span>\n\n　　倡议内容... <span class="translation">(Initiative - indented)</span>\n\n　　呼吁大家行动起来... <span class="translation">(Call to action - indented)</span>\n\n<div style="text-align: right;">小组 / 发起人名字 <span class="translation">(Group/Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
-        keywords: [
-            { zh: '现状与倡议缩进', en: 'Situation & initiative indented' },
-            { zh: '落款靠右', en: 'Sign-off right aligned' }
-        ]
-    },
-    {
-        id: 'poster',
-        enTitle: 'Poster',
-        zhTitle: '海报',
-        description: 'Event promotion. Crucial details like time, location, and fees must be indented.',
-        structure: '<div style="text-align: center; font-size: 1.5em; font-weight: bold;">活动主题 <span class="translation">(Title)</span></div>\n\n　　正文介绍... <span class="translation">(Intro - indented)</span>\n\n　　时间: ... <span class="translation">(Time - indented)</span>\n　　地点: ... <span class="translation">(Location - indented)</span>\n　　门票 / 费用: ... <span class="translation">(Ticket/Fee - indented)</span>\n　　报名: ... <span class="translation">(Registration - indented)</span>\n　　联络人/电话: ... <span class="translation">(Contact/Phone - indented)</span>',
-        keywords: [
-            { zh: '活动细节缩进', en: 'Event details indented' }
-        ]
-    },
-    {
-        id: 'note',
-        enTitle: 'Note',
-        zhTitle: '便条',
-        description: 'A brief, informal message. Name and date aligned to the right.',
-        structure: '收条人：\n\n　　正文内容... <span class="translation">(Body paragraph - indented)</span>\n\n<div style="text-align: right;">王大 / 名字 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
-        keywords: [
-            { zh: '正文缩进', en: 'Body indented' },
-            { zh: '落款靠右', en: 'Sign-off right aligned' }
-        ]
-    },
-    {
-        id: 'article',
-        enTitle: 'Magazine / Newspaper Article',
-        zhTitle: '杂志，报纸文章',
-        description: 'A published piece. The title, author, and date are all centered at the top.',
-        structure: '<div style="text-align: center; font-size: 1.2em; font-weight: bold;">题目 <span class="translation">(Title - centered)</span></div>\n<div style="text-align: center;">作者 <span class="translation">(Author - centered)</span></div>\n<div style="text-align: center;">日期 <span class="translation">(Date - centered)</span></div>\n\n　　正文段落... <span class="translation">(Body paragraph - indented)</span>',
-        keywords: [
-            { zh: '标题块居中', en: 'Title block centered' },
-            { zh: '段落缩进', en: 'Paragraphs indented' }
-        ]
-    },
-    {
-        id: 'interview',
-        enTitle: 'Interview Report',
-        zhTitle: '采访报告',
-        description: 'Transcript of an interview. Q&A and summaries are indented; interviewer info is right aligned.',
-        structure: '<div style="text-align: center; font-weight: bold;">采访题目 <span class="translation">(Title)</span></div>\n\n　　问与答... <span class="translation">(Q&A - indented)</span>\n\n　　总结... <span class="translation">(Summary - indented)</span>\n\n<div style="text-align: right;">姓名 <span class="translation">(Name - right aligned)</span></div>\n<div style="text-align: right;">日期 <span class="translation">(Date - right aligned)</span></div>',
-        keywords: [
-            { zh: '问答缩进', en: 'Q&A indented' },
-            { zh: '落款靠右', en: 'Sign-off right aligned' }
-        ]
-    },
-    {
-        id: 'activity_guide',
-        enTitle: 'Activity Guide',
-        zhTitle: '活动指南',
-        description: 'Step-by-step instructions. Numbers are left aligned, while the actual content and summary are indented.',
-        structure: '<div style="text-align: center; font-weight: bold;">指南题目 <span class="translation">(Title)</span></div>\n\n一、主题一 <span class="translation">(1. Left aligned)</span>\n　　内容... <span class="translation">(Content indented under number)</span>\n\n二、主题二 <span class="translation">(2. Left aligned)</span>\n　　内容... <span class="translation">(Content indented under number)</span>\n\n三、主题三 <span class="translation">(3. Left aligned)</span>\n　　内容... <span class="translation">(Content indented under number)</span>\n\n　　总结... <span class="translation">(Summary - indented)</span>',
-        keywords: [
-            { zh: '序号靠左', en: 'Numbers left aligned' },
-            { zh: '内容缩进', en: 'Content indented' }
-        ]
-    },
-    {
-        id: 'brochure',
-        enTitle: 'Brochure / Layout',
-        zhTitle: '宣传册/排版',
-        description: 'Promotional layout. Includes a designated headline block, left-aligned numbers, and indented subtitles.',
-        structure: '<div style="border: 2px solid var(--ink-black); padding: 8px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.05);">Headline <span class="translation">(In a designated box/block)</span></div>\n\n一、项目一 <span class="translation">(1. Left aligned)</span>\n　　详情 / 小标题... <span class="translation">(Details / Subtitle - indented)</span>\n\n二、项目二 <span class="translation">(2. Left aligned)</span>\n　　详情 / 小标题... <span class="translation">(Details / Subtitle - indented)</span>\n\n三、项目三 <span class="translation">(3. Left aligned)</span>\n　　详情 / 小标题... <span class="translation">(Details / Subtitle - indented)</span>',
-        keywords: [
-            { zh: '标题框', en: 'Headline block' },
-            { zh: '小标题缩进', en: 'Subtitles indented' }
-        ]
-    },
-    {
-        id: 'social_media',
-        enTitle: 'Social Media Post',
-        zhTitle: '社交媒体发布',
-        description: 'Digital post formatting. Date is centered at the top, text is indented, and interaction metrics are centered at the bottom.',
-        structure: '<div style="text-align: center; color: var(--ink-light); font-size: 0.9em; margin-bottom: 8px;">日期 / X年X月X日 <span class="translation">(Date - centered at top)</span></div>\n　　文本内容... <span class="translation">(Text content - indented rows)</span>\n　　更多文本... <span class="translation">(More text - indented rows)</span>\n\n#话题，@某人，链接 <span class="translation">(Hashtags, mentions, links - left aligned)</span>\n\n<div style="text-align: center; border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 10px; font-size: 0.95em;">👍 点赞 (12) &nbsp;&nbsp;&nbsp; 💬 评论 (3) &nbsp;&nbsp;&nbsp; ↪️ 分享 / 转发 <span class="translation">(Likes, Comments, Shares - centered at bottom)</span></div>',
-        keywords: [
-            { zh: '日期居中', en: 'Date centered top' },
-            { zh: '互动居中', en: 'Interactions centered bottom' }
-        ]
-    }
+  // ─── 4. 便条 ─────────────────────────────────────────────────────────────────
+  {
+    id:'note', char:'条', zhName:'便条', pinyin:'biàntiáo', enName:'Note / Message', color:'#7B6EA8',
+    tagline:'Short informal written message',
+    formatRules:[
+      'Recipient left-aligned at margin: XX：',
+      'Body is brief (3–5 sentences), no indentation needed',
+      'One blank line between paragraphs',
+      'Name left-aligned after the body',
+      'Time left-aligned after name, in parentheses',
+    ],
+    layout:[
+      {k:'left', t:'小红：', note:'Recipient — left-aligned, ends with colon'},
+      {k:'blank'},
+      {k:'left', t:'我今天下午有补习，不能和你一起去图书馆了。对不起！', note:'Body — no indent'},
+      {k:'blank'},
+      {k:'left', t:'我们可以明天下午两点在咖啡厅见面吗？请回复我。'},
+      {k:'blank'},
+      {k:'left', t:'小明', note:'Name — left-aligned'},
+      {k:'left', t:'（下午3:30）', note:'Time — left-aligned, in parentheses'},
+    ],
+    phrases:[
+      {zh:'我想告诉你……', pinyin:'Wǒ xiǎng gàosù nǐ…', en:'I want to tell you…'},
+      {zh:'对不起，我不能……', pinyin:'Duìbuqǐ, wǒ bù néng…', en:"Sorry, I can't…"},
+      {zh:'我们可以……吗？', pinyin:'Wǒmen kěyǐ… ma?', en:'Can we…?'},
+      {zh:'请回复我', pinyin:'Qǐng huífù wǒ', en:'Please reply to me'},
+      {zh:'别忘了……', pinyin:'Bié wàngle…', en:"Don't forget…"},
+      {zh:'记得……', pinyin:'Jìde…', en:'Remember to…'},
+      {zh:'我今天不能……', pinyin:'Wǒ jīntiān bù néng…', en:"I can't… today"},
+      {zh:'改天再说', pinyin:'Gǎitiān zài shuō', en:"Let's talk another day"},
+    ],
+    checklist:[
+      {zh:'称呼', en:'Recipient named at start (XX：)'},
+      {zh:'内容简短', en:'Message is brief (3–5 sentences max)'},
+      {zh:'目的明确', en:'Main point stated immediately'},
+      {zh:'署名', en:'Your name written at the end — left-aligned'},
+      {zh:'时间', en:'Time noted if time-sensitive (in parentheses)'},
+      {zh:'语气', en:'Casual, friendly tone throughout'},
+    ],
+  },
+
+  // ─── 5. 通知 ─────────────────────────────────────────────────────────────────
+  {
+    id:'notice', char:'告', zhName:'通知', pinyin:'tōngzhī', enName:'Notice', color:'#5B6EA8',
+    tagline:'Formal announcement for a specific audience',
+    formatRules:[
+      '"通知" title centered (larger font)',
+      'Audience left-aligned at margin: 全体同学：',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'Date right-aligned at bottom: YYYY年MM月DD日',
+      'Issuing body right-aligned below date',
+    ],
+    layout:[
+      {k:'center', t:'通　知', note:'Title — centered'},
+      {k:'blank'},
+      {k:'left', t:'全体同学：', note:'Audience — left-aligned, ends with colon'},
+      {k:'blank'},
+      {k:'indent', t:'学校将于下周五（4月25日）举办汉语文化节。活动将在学校礼堂举行，时间为上午九点至下午三点。', note:'Body — indented 2 chars'},
+      {k:'blank'},
+      {k:'indent', t:'本次活动包括书法展览、中国传统音乐表演以及美食品尝等环节。请各位同学积极参与，并于本周三前向班主任报名。'},
+      {k:'blank'},
+      {k:'indent', t:'参加活动的同学请穿校服，并准时到达。如有任何问题，请联系教务处。'},
+      {k:'blank'},
+      {k:'right', t:'2026年4月19日', note:'Date — right-aligned at bottom'},
+      {k:'right', t:'学校教务处', note:'Issuing body — right-aligned, below date'},
+    ],
+    phrases:[
+      {zh:'现将有关事项通知如下', pinyin:'Xiàn jiāng yǒuguān shìxiàng tōngzhī rúxià', en:'The following matters are hereby announced'},
+      {zh:'请各位同学……', pinyin:'Qǐng gèwèi tóngxué…', en:'All students are asked to…'},
+      {zh:'于……举行', pinyin:'Yú… jǔxíng', en:'Will be held at/on…'},
+      {zh:'如有疑问，请联系……', pinyin:'Rú yǒu yíwèn, qǐng liánxì…', en:'If you have questions, please contact…'},
+      {zh:'特此通知', pinyin:'Tè cǐ tōngzhī', en:'This notice is hereby issued'},
+      {zh:'请准时出席', pinyin:'Qǐng zhǔnshí chūxí', en:'Please attend punctually'},
+      {zh:'请于……前……', pinyin:'Qǐng yú… qián…', en:'Please do … before…'},
+      {zh:'敬请注意', pinyin:'Jìng qǐng zhùyì', en:'Please be advised'},
+    ],
+    checklist:[
+      {zh:'"通知"标题', en:'"通知" centered as heading'},
+      {zh:'受众称呼', en:'Who the notice is for — left-aligned (全体同学：)'},
+      {zh:'内容', en:'Clear details: what, when, where'},
+      {zh:'正文缩进', en:'Body paragraphs indented 2 characters'},
+      {zh:'要求', en:'What readers must do (请各位……)'},
+      {zh:'联系方式', en:'Contact info provided'},
+      {zh:'日期', en:'Date right-aligned at bottom (YYYY年MM月DD日)'},
+      {zh:'发布单位', en:'Issuing body right-aligned below date'},
+    ],
+  },
+
+  // ─── 6. 博客 ─────────────────────────────────────────────────────────────────
+  {
+    id:'blog', char:'博', zhName:'博客', pinyin:'bókè', enName:'Blog Post', color:C.gold,
+    tagline:'Online personal post for a wide audience',
+    formatRules:[
+      'Title centered at top',
+      'Web address centered below title (e.g. www.myblog.com/用户名)',
+      'Publication date centered below web address: 发布于：YYYY年MM月DD日',
+      'Open by greeting readers directly (大家好！)',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'End with an invitation for readers to comment or interact',
+      'Engagement stats (Likes, Comments, Shares, Views) shown evenly across the bottom',
+    ],
+    layout:[
+      {k:'center', t:'我的第一次露营经历', note:'Title — centered'},
+      {k:'center', t:'www.myblog.com/大卫', note:'Blog URL — centered below title'},
+      {k:'center', t:'发布于：2026年4月19日', note:'Publication date — centered'},
+      {k:'blank'},
+      {k:'indent', t:'大家好！今天我想跟大家分享我上周末第一次露营的经历！', note:'Open by greeting readers'},
+      {k:'blank'},
+      {k:'indent', t:'说实话，我一开始有点担心，因为我从来没有在外面睡过觉。但是我的朋友们一直鼓励我，所以我决定试一试。我们去了学校附近的一个公园，搭好帐篷之后，我们一起烤了棉花糖，真的太好吃了！'},
+      {k:'blank'},
+      {k:'indent', t:'晚上我们看了很多星星，聊了很多有趣的话题。虽然晚上有一点冷，但是我觉得非常开心和放松。'},
+      {k:'blank'},
+      {k:'indent', t:'这次露营让我明白了，有时候我们要勇敢地尝试新的事情！你们有没有类似的经历？欢迎在下面留言！', note:'Invite reader interaction at end'},
+      {k:'stats', likes:128, comments:14, shares:7, views:892},
+    ],
+    phrases:[
+      {zh:'大家好！', pinyin:'Dàjiā hǎo!', en:'Hello everyone!'},
+      {zh:'今天我想跟大家分享……', pinyin:'Jīntiān wǒ xiǎng gēn dàjiā fēnxiǎng…', en:'Today I want to share with everyone…'},
+      {zh:'说实话……', pinyin:'Shuō shíhuà…', en:'Honestly speaking…'},
+      {zh:'我觉得……', pinyin:'Wǒ juéde…', en:'I think / I feel…'},
+      {zh:'你们觉得呢？', pinyin:'Nǐmen juéde ne?', en:'What do you all think?'},
+      {zh:'欢迎留言！', pinyin:'Huānyíng liúyán!', en:'Feel free to leave a comment!'},
+      {zh:'下次再见！', pinyin:'Xià cì zàijiàn!', en:'See you next time!'},
+      {zh:'我决定试一试', pinyin:'Wǒ juédìng shì yi shì', en:'I decided to give it a try'},
+    ],
+    checklist:[
+      {zh:'标题', en:'Engaging title — centered'},
+      {zh:'网址', en:'Blog URL centered below title (www.myblog.com/用户名)'},
+      {zh:'发布日期', en:'Publication date centered (发布于：YYYY年MM月DD日)'},
+      {zh:'问候读者', en:'Readers addressed directly at start (大家好！)'},
+      {zh:'话题引入', en:'Topic introduced naturally in opening'},
+      {zh:'正文缩进', en:'Body paragraphs indented 2 characters'},
+      {zh:'个人观点', en:'Personal opinions clearly expressed'},
+      {zh:'互动结尾', en:'Readers invited to respond at the end'},
+      {zh:'互动数据', en:'Engagement stats shown at bottom (Likes, Comments, Shares, Views)'},
+    ],
+  },
+
+  // ─── 7. 文章 ─────────────────────────────────────────────────────────────────
+  {
+    id:'article', char:'文', zhName:'文章', pinyin:'wénzhāng', enName:'Article', color:C.lacquer,
+    tagline:'Informative piece for a publication or school paper',
+    formatRules:[
+      'Headline centered (larger font)',
+      'Byline centered below headline: 作者：XX ｜ YYYY年MM月DD日',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'Quotes formatted as: XX表示："……" or XX说："……"',
+      'Conclusion paragraph summarises key points — no signature or closing',
+    ],
+    layout:[
+      {k:'center', t:'学校举办中国文化节，学生热情参与', note:'Headline — centered'},
+      {k:'blank'},
+      {k:'center', t:'作者：小明 ｜ 2026年4月15日', note:'Byline — centered under headline'},
+      {k:'blank'},
+      {k:'indent', t:'上周五，本校在操场举办了一年一度的中国文化节。来自各年级的五百多名学生参加了这次活动，受到了师生的热烈欢迎。', note:'Lead paragraph — who/what/when/where'},
+      {k:'blank'},
+      {k:'indent', t:'本次活动设有多个展台，包括书法、茶艺、传统服装体验以及中国食品品尝。许多学生表示，这是他们第一次体验传统中国文化，感到非常有趣。'},
+      {k:'blank'},
+      {k:'indent', t:'参与活动的王同学表示："我学会了怎么用毛笔写字，虽然很难，但是非常好玩。"', note:'Quote — XX表示："……"'},
+      {k:'blank'},
+      {k:'indent', t:'据组织老师介绍，举办此次活动的目的是帮助学生更好地了解中华文化。总的来说，本次文化节取得了圆满成功，学校计划明年继续举办。', note:'Conclusion — no closing or signature'},
+    ],
+    phrases:[
+      {zh:'据报道……', pinyin:'Jù bàodào…', en:'It is reported that…'},
+      {zh:'近年来……', pinyin:'Jìn nián lái…', en:'In recent years…'},
+      {zh:'[人物]表示……', pinyin:'[rénwù] biǎoshì…', en:'[Person] stated that…'},
+      {zh:'总的来说……', pinyin:'Zǒng de lái shuō…', en:'Overall / In summary…'},
+      {zh:'此次活动……', pinyin:'Cǐ cì huódòng…', en:'This event…'},
+      {zh:'引起了广泛关注', pinyin:'Yǐnqǐle guǎngfàn guānzhù', en:'attracted widespread attention'},
+      {zh:'受到……欢迎', pinyin:'Shòudào… huānyíng', en:'was welcomed by…'},
+      {zh:'活动取得圆满成功', pinyin:'Huódòng qǔdé yuánmǎn chénggōng', en:'The event was a great success'},
+    ],
+    checklist:[
+      {zh:'标题', en:'Clear headline — centered'},
+      {zh:'作者/日期', en:'Byline centered: 作者：XX ｜ date'},
+      {zh:'导语', en:'Lead paragraph answers who/what/when/where'},
+      {zh:'正文缩进', en:'Body paragraphs indented 2 characters'},
+      {zh:'客观语气', en:'Objective tone maintained (minimal 我)'},
+      {zh:'引用', en:'Quotes included (XX表示："……")'},
+      {zh:'结论', en:'Conclusion summarises key points — no signature'},
+    ],
+  },
+
+  // ─── 8. 海报 ─────────────────────────────────────────────────────────────────
+  {
+    id:'poster', char:'报', zhName:'海报', pinyin:'hǎibào', enName:'Poster', color:'#2E7D6B',
+    tagline:'Visual, punchy promotional material',
+    formatRules:[
+      'Main title centered (largest font, most prominent)',
+      'Subtitle or tagline centered below main title',
+      'Time, location, cost listed as left-aligned label fields',
+      'Event highlights in a bullet list (left-aligned)',
+      'Call to action centered (large font, eye-catching)',
+      'Contact details left-aligned',
+    ],
+    layout:[
+      {k:'center', t:'🎉 汉语文化节 🎉', note:'Main title — centered, large and bold'},
+      {k:'center', t:'感受中华文化之美', note:'Tagline — centered'},
+      {k:'blank'},
+      {k:'field', label:'时间：', t:'2026年4月25日（星期五）上午9:00–下午3:00', note:'Details — left-aligned fields'},
+      {k:'field', label:'地点：', t:'学校礼堂'},
+      {k:'field', label:'费用：', t:'免费入场'},
+      {k:'blank'},
+      {k:'left', t:'活动亮点：', note:'Section heading — left-aligned'},
+      {k:'bullet', t:'传统书法体验'},
+      {k:'bullet', t:'精彩舞龙表演'},
+      {k:'bullet', t:'中国美食品尝'},
+      {k:'bullet', t:'传统服装拍照'},
+      {k:'blank'},
+      {k:'center', t:'名额有限，快快报名！', note:'Call to action — centered'},
+      {k:'blank'},
+      {k:'left', t:'报名请联系：王老师'},
+      {k:'left', t:'邮件：wang@school.edu'},
+    ],
+    phrases:[
+      {zh:'快来参加！', pinyin:'Kuài lái cānjiā!', en:'Come and join us!'},
+      {zh:'名额有限', pinyin:'Míngé yǒuxiàn', en:'Limited spaces available'},
+      {zh:'免费入场', pinyin:'Miǎnfèi rùchǎng', en:'Free admission'},
+      {zh:'立即报名！', pinyin:'Lìjí bàomíng!', en:'Sign up now!'},
+      {zh:'不要错过！', pinyin:'Bùyào cuòguò!', en:"Don't miss it!"},
+      {zh:'欢迎所有人参加', pinyin:'Huānyíng suǒyǒurén cānjiā', en:'Everyone is welcome'},
+      {zh:'活动将于……举行', pinyin:'Huódòng jiāng yú… jǔxíng', en:'The event will be held at…'},
+      {zh:'精彩不容错过', pinyin:'Jīngcǎi bù róng cuòguò', en:'Not to be missed'},
+    ],
+    checklist:[
+      {zh:'大标题', en:'Bold, large headline centered'},
+      {zh:'时间', en:'Date and time clearly stated'},
+      {zh:'地点', en:'Location included'},
+      {zh:'费用', en:'Cost / admission price mentioned'},
+      {zh:'亮点列表', en:'Key highlights in bullet list'},
+      {zh:'号召行动', en:'Call to action centered (快来参加！)'},
+      {zh:'联系方式', en:'Contact details provided'},
+    ],
+  },
+
+  // ─── 9. 演讲稿 ──────────────────────────────────────────────────────────────
+  {
+    id:'speech', char:'演', zhName:'演讲稿', pinyin:'yǎnjiǎng gǎo', enName:'Speech', color:'#B5490A',
+    tagline:'Formal spoken address prepared in written form',
+    formatRules:[
+      'Opening salutation left-aligned at margin (no indent): 尊敬的老师们，亲爱的同学们：',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'One blank line between paragraphs',
+      'Transition words begin each paragraph (首先 / 其次 / 最后)',
+      'Closing left-aligned at margin (no indent): 谢谢大家！',
+      'Optional: name and date right-aligned at the very end',
+    ],
+    layout:[
+      {k:'left', t:'尊敬的老师们，亲爱的同学们：', note:'Opening salutation — left-aligned, no indent'},
+      {k:'blank'},
+      {k:'indent', t:'大家好！我叫王明，今天我演讲的题目是"中国传统节日的重要性"。中国有很多重要的传统节日，比如春节、中秋节和端午节，这些节日对我们的文化和生活有非常重要的意义。', note:'Body — indented 2 chars'},
+      {k:'blank'},
+      {k:'indent', t:'首先，传统节日让家人能够团聚在一起。以春节为例，无论人们在哪里工作，大多数人都会回家和家人一起吃团圆饭。这种习俗让家庭关系更加紧密。', note:'首先… (first point)'},
+      {k:'blank'},
+      {k:'indent', t:'其次，传统节日帮助我们保护和传承中华文化。每个节日都有自己独特的习俗和故事，通过庆祝这些节日，我们可以把中国的历史和文化传给下一代。', note:'其次… (second point)'},
+      {k:'blank'},
+      {k:'indent', t:'总的来说，中国传统节日是我们文化的重要组成部分。我希望大家都能了解和珍视这些节日。', note:'Conclusion paragraph'},
+      {k:'blank'},
+      {k:'left', t:'谢谢大家！', note:'Closing — left-aligned, no indent'},
+      {k:'blank'},
+      {k:'right', t:'王明', note:'Optional: name — right-aligned'},
+      {k:'right', t:'2026年4月19日', note:'Optional: date — right-aligned'},
+    ],
+    phrases:[
+      {zh:'大家好，我叫……', pinyin:'Dàjiā hǎo, wǒ jiào…', en:'Hello everyone, my name is…'},
+      {zh:'我演讲的题目是……', pinyin:'Wǒ yǎnjiǎng de títù shì…', en:'The topic of my speech is…'},
+      {zh:'首先……其次……最后……', pinyin:'Shǒuxiān… qícì… zuìhòu…', en:'First… secondly… finally…'},
+      {zh:'以……为例……', pinyin:'Yǐ… wéi lì…', en:'Taking… as an example…'},
+      {zh:'总的来说……', pinyin:'Zǒng de lái shuō…', en:'In summary…'},
+      {zh:'我认为……', pinyin:'Wǒ rènwéi…', en:'I believe that…'},
+      {zh:'谢谢大家！', pinyin:'Xièxiè dàjiā!', en:'Thank you everyone!'},
+      {zh:'希望大家……', pinyin:'Xīwàng dàjiā…', en:'I hope everyone…'},
+    ],
+    checklist:[
+      {zh:'开场称呼', en:'Opening salutation left-aligned (尊敬的老师们……：)'},
+      {zh:'题目介绍', en:'Topic introduced in opening paragraph'},
+      {zh:'正文缩进', en:'Each body paragraph indented 2 characters'},
+      {zh:'过渡词', en:'Transition words used (首先 / 其次 / 最后)'},
+      {zh:'段落空行', en:'Blank line between paragraphs'},
+      {zh:'个人观点', en:'Opinion clearly stated (我认为 / 我觉得)'},
+      {zh:'结论段', en:'Summary paragraph before closing'},
+      {zh:'结束语', en:'Closing thanks left-aligned (谢谢大家！)'},
+    ],
+  },
+
+  // ─── 10. 访谈录 ─────────────────────────────────────────────────────────────
+  {
+    id:'interview', char:'访', zhName:'访谈录', pinyin:'fǎngtán lù', enName:'Interview', color:'#2E7D8B',
+    tagline:'Written record of a question-and-answer interview',
+    formatRules:[
+      'Title centered at top',
+      'Interviewee introduction left-aligned',
+      'Divider line separates introduction from Q&A',
+      'Interviewer label left-aligned at margin: 记者：',
+      'Interviewee label left-aligned at margin: XX：',
+      'One blank line between question and answer',
+      'One blank line between each Q&A exchange',
+    ],
+    layout:[
+      {k:'center', t:'专访：我的汉语学习之旅', note:'Title — centered'},
+      {k:'blank'},
+      {k:'left', t:'受访者：李华，本校汉语学习优秀学生', note:'Interviewee intro — left-aligned'},
+      {k:'divider', note:'Divider between intro and Q&A'},
+      {k:'qa', role:'记者', t:'请问你学习汉语多久了？为什么选择学习汉语？', isQ:true, note:'Interviewer — left-aligned role label'},
+      {k:'blank'},
+      {k:'qa', role:'李华', t:'我学习汉语已经两年了。我选择学习汉语是因为我对中国文化非常感兴趣，而且我认为汉语在未来会非常有用。', isQ:false, note:'Interviewee — left-aligned role label'},
+      {k:'blank'},
+      {k:'qa', role:'记者', t:'学习汉语最大的挑战是什么？', isQ:true},
+      {k:'blank'},
+      {k:'qa', role:'李华', t:'我觉得最大的挑战是汉字。汉字很多，而且每个字的写法都不一样。但是通过每天练习，我慢慢地进步了。', isQ:false},
+      {k:'blank'},
+      {k:'qa', role:'记者', t:'你有什么建议给刚开始学习汉语的同学吗？', isQ:true},
+      {k:'blank'},
+      {k:'qa', role:'李华', t:'我的建议是每天坚持练习，不要怕犯错。多看中文电影和听中文歌曲也很有帮助。最重要的是，要对汉语保持热情！', isQ:false},
+    ],
+    phrases:[
+      {zh:'请问……', pinyin:'Qǐngwèn…', en:'May I ask…'},
+      {zh:'您能介绍一下……吗？', pinyin:'Nín néng jièshào yīxià… ma?', en:'Could you introduce…?'},
+      {zh:'我认为……', pinyin:'Wǒ rènwéi…', en:'I believe that…'},
+      {zh:'从我的经验来看……', pinyin:'Cóng wǒ de jīngyàn lái kàn…', en:'From my experience…'},
+      {zh:'对我来说……', pinyin:'Duì wǒ lái shuō…', en:'For me…'},
+      {zh:'非常感谢您接受我们的采访', pinyin:'Fēicháng gǎnxiè nín jiēshòu wǒmen de cǎifǎng', en:'Thank you very much for the interview'},
+      {zh:'最后，请问……', pinyin:'Zuìhòu, qǐngwèn…', en:'Finally, may I ask…'},
+      {zh:'我的建议是……', pinyin:'Wǒ de jiànyì shì…', en:'My suggestion is…'},
+    ],
+    checklist:[
+      {zh:'标题', en:'Title centered at top'},
+      {zh:'受访者介绍', en:'Interviewee briefly introduced — left-aligned'},
+      {zh:'分隔线', en:'Divider between intro and Q&A'},
+      {zh:'记者标签', en:'Interviewer label left-aligned (记者：)'},
+      {zh:'受访者标签', en:'Interviewee label left-aligned (name：)'},
+      {zh:'问答空行', en:'Blank line between each Q&A exchange'},
+      {zh:'3组以上', en:'At least 3 question-and-answer pairs'},
+      {zh:'语气', en:'Formal but conversational tone throughout'},
+    ],
+  },
+
+  // ─── 11. 申请信 ─────────────────────────────────────────────────────────────
+  {
+    id:'application', char:'申', zhName:'申请信', pinyin:'shēnqǐng xìn', enName:'Application Letter', color:'#8B4513',
+    tagline:'Formal letter applying for a position, programme or opportunity',
+    formatRules:[
+      'Formal salutation left-aligned at margin with colon: 尊敬的……：',
+      'First line of each body paragraph indented 2 Chinese characters (2em)',
+      'First paragraph: clearly state the purpose of the application',
+      'Second paragraph: describe your qualifications or relevant experience',
+      'Third paragraph: express hope and thank the reader',
+      'One blank line between paragraphs',
+      'Formal closing right-aligned: 此致敬礼，',
+      'Name right-aligned below closing phrase',
+      'Date right-aligned at bottom: YYYY年MM月DD日 format',
+    ],
+    layout:[
+      {k:'left', t:'尊敬的招生委员会：', note:'Formal salutation — left-aligned, ends with colon'},
+      {k:'blank'},
+      {k:'indent', t:'我叫王明，是本校十年级的学生。我写信是为了申请贵校暑期汉语强化课程的参加名额，希望能通过这个机会提高我的汉语水平。', note:'Para 1 — state purpose'},
+      {k:'blank'},
+      {k:'indent', t:'我学习汉语已经两年，在课堂中取得了良好的成绩。我对中国文化有浓厚的兴趣，曾多次参加学校的文化活动。我认为贵校的课程将帮助我更系统地学习汉语，为将来的深造打好基础。', note:'Para 2 — qualifications'},
+      {k:'blank'},
+      {k:'indent', t:'如蒙录取，我将认真学习，珍惜这次机会。我期待能够收到您的回复，非常感谢您考虑我的申请。', note:'Para 3 — hope & thanks'},
+      {k:'blank'},
+      {k:'right', t:'此致敬礼，', note:'Formal closing — right-aligned'},
+      {k:'right', t:'王明', note:'Name — right-aligned'},
+      {k:'right', t:'2026年04月19日', note:'Date — bottom right (YYYY年MM月DD日)'},
+    ],
+    phrases:[
+      {zh:'我写信是为了申请……', pinyin:'Wǒ xiě xìn shì wèile shēnqǐng…', en:'I am writing to apply for…'},
+      {zh:'希望能通过……提高……', pinyin:'Xīwàng néng tōngguò… tígāo…', en:'I hope to improve… through…'},
+      {zh:'我认为……将帮助我……', pinyin:'Wǒ rènwéi… jiāng bāngzhù wǒ…', en:'I believe… will help me…'},
+      {zh:'如蒙录取……', pinyin:'Rú méng lùqǔ…', en:'If accepted…'},
+      {zh:'非常感谢您考虑我的申请', pinyin:'Fēicháng gǎnxiè nín kǎolǜ wǒ de shēnqǐng', en:'Thank you very much for considering my application'},
+      {zh:'期待收到您的回复', pinyin:'Qīdài shōudào nín de huífù', en:'Looking forward to your reply'},
+      {zh:'此致敬礼', pinyin:'Cǐ zhì jìng lǐ', en:'Yours respectfully'},
+      {zh:'我对……有浓厚的兴趣', pinyin:'Wǒ duì… yǒu nónghòu de xìngqù', en:'I have a strong interest in…'},
+    ],
+    checklist:[
+      {zh:'正式称呼', en:'Formal salutation left-aligned, ends with colon (：)'},
+      {zh:'第一段目的', en:'Opening paragraph states purpose of application'},
+      {zh:'第二段条件', en:'Middle paragraph covers qualifications / experience'},
+      {zh:'第三段期望', en:'Final paragraph expresses hope and gratitude'},
+      {zh:'正文缩进', en:'Each paragraph indented 2 characters'},
+      {zh:'段落空行', en:'Blank line between paragraphs'},
+      {zh:'结束语', en:'Formal closing right-aligned (此致敬礼，)'},
+      {zh:'署名', en:'Name right-aligned below closing'},
+      {zh:'日期（信尾）', en:'Date bottom right: YYYY年MM月DD日'},
+    ],
+  },
 ];
 
-        const searchInput = document.getElementById('searchInput');
-        const navList = document.getElementById('navList');
-        const contentBody = document.getElementById('contentBody');
-        const displayEnTitle = document.getElementById('displayEnTitle');
-        const displayZhTitle = document.getElementById('displayZhTitle');
-        const displayDesc = document.getElementById('displayDesc');
-        const displayStructure = document.getElementById('displayStructure');
-        const displayKeywords = document.getElementById('displayKeywords');
+// ─── Utilities ──────────────────────────────────────────────────────────────
 
-        function renderList(filter = '') {
-            navList.innerHTML = '';
-            const lowerFilter = filter.toLowerCase();
-            
-            textTypesData.forEach((item, index) => {
-                if (item.enTitle.toLowerCase().includes(lowerFilter) || 
-                    item.zhTitle.includes(lowerFilter)) {
-                    
-                    const li = document.createElement('li');
-                    li.className = 'nav-item';
-                    li.innerHTML = `
-                        <span class="en-title">${item.enTitle}</span>
-                        <span class="zh-title">${item.zhTitle}</span>
-                    `;
-                    
-                    li.addEventListener('click', () => {
-                        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                        li.classList.add('active');
-                        loadContent(item);
-                    });
+function usePersist(key, def) {
+  const [val, setVal] = React.useState(() => {
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; }
+  });
+  const set = v => { setVal(v); try { localStorage.setItem(key, JSON.stringify(v)); } catch {} };
+  return [val, set];
+}
 
-                    navList.appendChild(li);
+function buildPlainText(layout) {
+  if (!layout) return '';
+  return layout.map(line => {
+    if (line.k === 'blank')   return '';
+    if (line.k === 'divider') return '─────────────────────';
+    if (line.k === '3col')    return `${line.l}\t\t${line.c}\t\t${line.r}`;
+    if (line.k === 'right')   return line.t;
+    if (line.k === 'center')  return line.t;
+    if (line.k === 'indent')  return `　　${line.t}`;
+    if (line.k === 'field')   return `${line.label}${line.t}`;
+    if (line.k === 'bullet')  return `✦ ${line.t}`;
+    if (line.k === 'qa')      return `${line.role}：${line.t}`;
+    return line.t || '';
+  }).join('\n');
+}
 
-                    // Auto-load first item on initial render
-                    if (index === 0 && filter === '') {
-                        li.click();
-                    }
-                }
-            });
-        }
+// ─── CopyBtn — 50% bigger icon than original ────────────────────────────────
 
-        function loadContent(data) {
-            contentBody.style.display = 'flex';
-            displayEnTitle.textContent = data.enTitle;
-            displayZhTitle.textContent = data.zhTitle;
-            displayDesc.textContent = data.description;
-            
-            displayStructure.innerHTML = data.structure
-                .split('\n')
-                .map(line => `<div class="paper-line">${line === '' ? '&nbsp;' : line}</div>`)
-                .join('');
-            
-            displayKeywords.innerHTML = data.keywords.map(kw => `
-                <div class="keyword-tag">
-                    <span>${kw.zh}</span>
-                    <span class="keyword-translation">${kw.en}</span>
-                </div>
-            `).join('');
-        }
+function copyText(text) {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  legacyCopy(text);
+  return Promise.resolve();
+}
+function legacyCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch {}
+  document.body.removeChild(ta);
+}
 
-        searchInput.addEventListener('input', (e) => {
-            renderList(e.target.value);
-        });
+function CopyBtn({ text, color, small }) {
+  const [copied, setCopied] = React.useState(false);
+  const handle = () => {
+    copyText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  };
+  const sz = small ? 15 : 18;
+  return (
+    <button
+      onClick={handle}
+      className="copy-btn"
+      title="Copy to clipboard"
+      style={{
+        border:'none',
+        background: copied ? `${color}18` : 'transparent',
+        cursor:'pointer',
+        padding: small ? '4px 8px' : '6px 11px',
+        borderRadius:6,
+        display:'flex', alignItems:'center', gap:5,
+        color: copied ? color : C.muted,
+        transition:'color 0.2s, background 0.2s',
+        flexShrink:0,
+      }}
+    >
+      {copied ? (
+        <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      ) : (
+        <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      )}
+      <span style={{ fontSize: small ? 10.5 : 12, fontWeight:500 }}>{copied ? 'Copied!' : 'Copy'}</span>
+    </button>
+  );
+}
 
-        // Initialize
-        renderList();
-    </script>
+// ─── SealStamp ──────────────────────────────────────────────────────────────
+
+function SealStamp({ char, color, size=52 }) {
+  return (
+    <div style={{
+      width:size, height:size,
+      border:`2px solid ${color}`,
+      display:'flex', alignItems:'center', justifyContent:'center',
+      flexShrink:0,
+    }}>
+      <span style={{ fontFamily:"'Noto Serif SC',serif", fontSize:size*0.48, fontWeight:700, color, lineHeight:1 }}>{char}</span>
+    </div>
+  );
+}
+
+// ─── Structured example renderer ────────────────────────────────────────────
+
+function ExampleLine({ line, color }) {
+  const base = {
+    fontFamily:"'Noto Serif SC',serif",
+    fontSize:14, lineHeight:2.0, color:C.ink,
+  };
+  if (line.k === 'blank')   return <div style={{ height:'0.45em' }}/>;
+  if (line.k === 'divider') return <hr style={{ border:'none', borderTop:`1px solid ${C.border}`, margin:'8px 0' }}/>;
+  if (line.k === '3col') return (
+    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', position:'relative' }}>
+      <span style={base}>{line.l}</span>
+      <span style={{ ...base, position:'absolute', left:'50%', transform:'translateX(-50%)' }}>{line.c}</span>
+      <span style={base}>{line.r}</span>
+    </div>
+  );
+  if (line.k === 'right')  return <div style={{ textAlign:'right' }}><span style={base}>{line.t}</span></div>;
+  if (line.k === 'center') return <div style={{ textAlign:'center' }}><span style={base}>{line.t}</span></div>;
+  if (line.k === 'indent') return <div style={{ paddingLeft:'2em' }}><span style={base}>{line.t}</span></div>;
+  if (line.k === 'field')  return (
+    <div style={{ display:'flex' }}>
+      <span style={{ ...base, color:C.muted, flexShrink:0, whiteSpace:'nowrap' }}>{line.label}</span>
+      <span style={base}>{line.t}</span>
+    </div>
+  );
+  if (line.k === 'bullet') return (
+    <div style={{ display:'flex', gap:8, paddingLeft:'1em', alignItems:'baseline' }}>
+      <span style={{ color, fontSize:11, flexShrink:0 }}>✦</span>
+      <span style={base}>{line.t}</span>
+    </div>
+  );
+  if (line.k === 'qa') return (
+    <div style={{ display:'flex', gap:6 }}>
+      <span style={{ ...base, fontWeight:600, color:line.isQ ? color : C.umber, flexShrink:0, whiteSpace:'nowrap' }}>{line.role}：</span>
+      <span style={base}>{line.t}</span>
+    </div>
+  );
+  if (line.k === 'stats') return (
+    <div style={{ display:'flex', justifyContent:'space-evenly', alignItems:'center', paddingTop:12, marginTop:10, borderTop:`1px solid ${C.border}` }}>
+      {[['♥', line.likes, 'Likes'], ['💬', line.comments, 'Comments'], ['↗', line.shares, 'Shares'], ['◎', line.views, 'Views']].map(([icon, count, label]) => (
+        <div key={label} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:1 }}>
+          <span style={{ fontSize:15, color }}>{icon}</span>
+          <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:13, fontWeight:600, color:C.ink }}>{count.toLocaleString()}</span>
+          <span style={{ fontSize:10, color:C.muted, letterSpacing:'0.03em' }}>{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+  return <div><span style={base}>{line.t}</span></div>;
+}
+
+// ─── ExampleTab ─────────────────────────────────────────────────────────────
+
+function ExampleTab({ type }) {
+  const [showRules, setShowRules] = React.useState(false);
+  const plainText = buildPlainText(type.layout);
+  const rules = type.formatRules || [];
+
+  return (
+    <div style={{ maxWidth:640 }}>
+      {/* Example card */}
+      <div style={{
+        background:C.paper, border:`1px solid ${C.border}`, borderRadius:10,
+        padding:'28px 32px', position:'relative', overflow:'hidden',
+      }}>
+        {/* Watermark */}
+        <div style={{
+          position:'absolute', top:6, right:14,
+          fontFamily:"'Noto Serif SC',serif", fontSize:84, fontWeight:700,
+          color:type.color, opacity:0.05, lineHeight:1, userSelect:'none', pointerEvents:'none',
+        }}>{type.char}</div>
+
+        {/* Header row */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ width:3, height:16, background:type.color, borderRadius:2 }}/>
+            <span style={{ fontSize:11, letterSpacing:'0.08em', color:type.color, textTransform:'uppercase', fontWeight:500 }}>示例 · Sample</span>
+          </div>
+          <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+            <button
+              onClick={() => setShowRules(r => !r)}
+              style={{
+                border:`1px solid ${showRules ? type.color : C.border}`,
+                background: showRules ? `${type.color}18` : 'transparent',
+                color: showRules ? type.color : C.muted,
+                borderRadius:5, padding:'4px 11px', cursor:'pointer',
+                fontSize:11.5, fontWeight:500, fontFamily:"'DM Sans',sans-serif",
+              }}
+            >
+              {showRules ? 'Hide Format' : 'Show Format'}
+            </button>
+            <CopyBtn text={plainText} color={type.color}/>
+          </div>
+        </div>
+
+        {/* Rendered layout */}
+        <div>
+          {(type.layout || []).map((line, i) => (
+            <ExampleLine key={i} line={line} color={type.color}/>
+          ))}
+        </div>
+      </div>
+
+      {/* Format rules panel */}
+      {showRules && rules.length > 0 && (
+        <div className="fade-up" style={{
+          marginTop:10,
+          background:`${type.color}0C`,
+          border:`1px solid ${type.color}2A`,
+          borderRadius:8, padding:'14px 18px',
+        }}>
+          <div style={{ fontSize:10.5, fontWeight:600, color:type.color, letterSpacing:'0.07em', textTransform:'uppercase', marginBottom:10 }}>
+            格式规则 · Formatting Rules
+          </div>
+          <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:5 }}>
+            {rules.map((r, i) => (
+              <li key={i} style={{ display:'flex', gap:8, alignItems:'flex-start' }}>
+                <span style={{ color:type.color, fontSize:10, flexShrink:0, marginTop:3 }}>▸</span>
+                <span style={{ fontSize:12.5, color:C.umber, lineHeight:1.6 }}>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <p style={{ marginTop:10, fontSize:11.5, color:C.muted, fontStyle:'italic' }}>
+        Illustrative example at Ab Initio level — adapt content and vocabulary to your own context.
+      </p>
+    </div>
+  );
+}
+
+// ─── PhrasesTab ─────────────────────────────────────────────────────────────
+
+function PhrasesTab({ type }) {
+  const [showPinyin, setShowPinyin] = usePersist('pinyin', true);
+  return (
+    <div>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18 }}>
+        <p style={{ fontSize:13, color:C.muted }}>Common sentence starters for {type.enName.toLowerCase()}s.</p>
+        <button onClick={() => setShowPinyin(!showPinyin)} style={{
+          display:'flex', alignItems:'center', gap:6,
+          padding:'6px 14px', border:`1px solid ${C.border}`,
+          borderRadius:20, background: showPinyin ? type.color : C.paper,
+          color: showPinyin ? C.paper : C.muted,
+          cursor:'pointer', fontSize:12, fontWeight:500, transition:'all 0.2s',
+        }}>
+          <span style={{ fontFamily:"'Noto Serif SC',serif", fontSize:13 }}>拼</span>
+          {showPinyin ? 'Hide pinyin' : 'Show pinyin'}
+        </button>
+      </div>
+      <div style={{ display:'flex', flexDirection:'column', gap:8, maxWidth:580 }}>
+        {type.phrases.map((p, i) => (
+          <div key={i} style={{
+            display:'flex', alignItems:'stretch',
+            background:C.paper, border:`1px solid ${C.border}`, borderRadius:8, overflow:'hidden',
+          }}>
+            <div style={{ background:type.color, width:4, flexShrink:0 }}/>
+            <div style={{ padding:'10px 14px', flex:1 }}>
+              <div style={{ fontFamily:"'Noto Serif SC',serif", fontSize:15, fontWeight:500, color:C.ink, marginBottom:2 }}>{p.zh}</div>
+              {showPinyin && <div style={{ fontSize:11.5, color:type.color, marginBottom:2, letterSpacing:'0.02em' }}>{p.pinyin}</div>}
+              <div style={{ fontSize:12.5, color:'#7a6a58', fontStyle:'italic' }}>{p.en}</div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', paddingRight:6 }}>
+              <CopyBtn text={p.zh} color={type.color} small/>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── ChecklistTab ────────────────────────────────────────────────────────────
+
+function ChecklistTab({ type }) {
+  const [checked, setChecked] = usePersist(`cl-${type.id}`, {});
+  const total = type.checklist.length;
+  const done  = Object.values(checked).filter(Boolean).length;
+  const pct   = total ? Math.round((done / total) * 100) : 0;
+  const toggle = i => setChecked({ ...checked, [i]: !checked[i] });
+
+  return (
+    <div style={{ maxWidth:520 }}>
+      <div style={{ marginBottom:22 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+          <span style={{ fontSize:13, color:C.muted }}>Writing checklist — tick off as you go</span>
+          <span style={{ fontSize:12, fontWeight:600, color: done===total ? C.jade : C.muted }}>{done}/{total}</span>
+        </div>
+        <div style={{ height:5, background:C.border, borderRadius:3, overflow:'hidden' }}>
+          <div style={{ width:`${pct}%`, height:'100%', background: done===total ? C.jade : type.color, borderRadius:3, transition:'width 0.3s ease' }}/>
+        </div>
+        {done === total && done > 0 && (
+          <p style={{ marginTop:8, fontSize:12.5, color:C.jade, fontWeight:500 }}>✓ All items checked — great work!</p>
+        )}
+      </div>
+      <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+        {type.checklist.map((item, i) => (
+          <button key={i} onClick={() => toggle(i)} style={{
+            display:'flex', alignItems:'center', gap:14, padding:'12px 16px',
+            background: checked[i] ? `${type.color}12` : C.paper,
+            border:`1.5px solid ${checked[i] ? type.color : C.border}`,
+            borderRadius:8, cursor:'pointer', textAlign:'left', transition:'all 0.15s',
+          }}>
+            <div style={{
+              width:22, height:22, borderRadius:5, flexShrink:0,
+              border:`2px solid ${checked[i] ? type.color : C.border}`,
+              background: checked[i] ? type.color : 'transparent',
+              display:'flex', alignItems:'center', justifyContent:'center', transition:'all 0.15s',
+            }}>
+              {checked[i] && <span style={{ color:C.paper, fontSize:12, fontWeight:700, lineHeight:1 }}>✓</span>}
+            </div>
+            <div>
+              <span style={{ fontFamily:"'Noto Serif SC',serif", fontSize:13, fontWeight:600, color: checked[i] ? type.color : C.ink, marginRight:8 }}>{item.zh}</span>
+              <span style={{ fontSize:13, color: checked[i] ? C.muted : C.umber, textDecoration: checked[i] ? 'line-through' : 'none' }}>{item.en}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+      {done > 0 && (
+        <button onClick={() => setChecked({})} style={{
+          marginTop:14, padding:'7px 16px', border:`1px solid ${C.border}`,
+          borderRadius:6, background:'transparent', cursor:'pointer', fontSize:12, color:C.muted,
+        }}>Reset checklist</button>
+      )}
+    </div>
+  );
+}
+
+// ─── MainContent ─────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id:'example',   label:'示例', en:'Example'   },
+  { id:'phrases',   label:'句型', en:'Phrases'   },
+  { id:'checklist', label:'清单', en:'Checklist' },
+];
+
+function MainContent({ type, bookmarks, setBookmarks }) {
+  const [tab, setTab]           = React.useState(0);
+  const [starAnim, setStarAnim] = React.useState(false);
+  React.useEffect(() => { setTab(0); }, [type.id]);
+
+  const isBookmarked = bookmarks.includes(type.id);
+
+  const toggleBookmark = () => {
+    setStarAnim(true);
+    setTimeout(() => setStarAnim(false), 600);
+    setBookmarks(isBookmarked
+      ? bookmarks.filter(b => b !== type.id)
+      : [...bookmarks, type.id]
+    );
+  };
+
+  return (
+    <main style={{ flex:1, minWidth:0, height:'100%', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+      {/* Header */}
+      <div style={{ padding:'26px 40px 0', borderBottom:`1px solid ${C.border}`, background:C.paper }}>
+        <div style={{ display:'flex', alignItems:'flex-start', gap:20, marginBottom:20 }}>
+          <SealStamp char={type.char} color={type.color} size={60}/>
+          <div style={{ flex:1 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+              <div style={{ display:'flex', alignItems:'baseline', gap:12 }}>
+                <h1 style={{ fontFamily:"'Noto Serif SC',serif", fontSize:30, fontWeight:700, color:C.ink, lineHeight:1.1 }}>{type.zhName}</h1>
+                <span style={{ fontSize:13.5, color:C.muted }}>{type.pinyin}</span>
+              </div>
+              {/* Star bookmark button with animation */}
+              <button
+                onClick={toggleBookmark}
+                className={starAnim ? 'star-pop' : ''}
+                title={isBookmarked ? 'Remove bookmark' : 'Bookmark this text type'}
+                style={{
+                  border:'none', background:'transparent', cursor:'pointer',
+                  fontSize:28, lineHeight:1, padding:'2px 4px',
+                  color: isBookmarked ? C.gold : C.border,
+                  transition:'color 0.3s',
+                  display:'inline-block',
+                }}
+              >
+                {isBookmarked ? '★' : '☆'}
+              </button>
+            </div>
+            <p style={{ fontSize:15, color:type.color, marginTop:2, fontWeight:500 }}>{type.enName}</p>
+            <p style={{ fontSize:12.5, color:C.muted, marginTop:3 }}>{type.tagline}</p>
+          </div>
+        </div>
+        {/* Tab bar */}
+        <div style={{ display:'flex' }}>
+          {TABS.map((t, i) => (
+            <button key={i} onClick={() => setTab(i)} style={{
+              padding:'9px 22px', border:'none', background:'transparent', cursor:'pointer',
+              fontFamily:"'Noto Serif SC',serif", fontSize:13.5,
+              color: tab===i ? type.color : C.muted,
+              fontWeight: tab===i ? 600 : 400,
+              borderBottom: tab===i ? `2px solid ${type.color}` : '2px solid transparent',
+              transition:'all 0.15s', marginBottom:-1,
+            }}>
+              {t.label}
+              <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:11, marginLeft:4, opacity:0.7 }}>{t.en}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tab content */}
+      <div style={{ flex:1, minHeight:0, overflowY:'auto', padding:'28px 40px' }}>
+        {tab === 0 && <ExampleTab   type={type}/>}
+        {tab === 1 && <PhrasesTab   type={type}/>}
+        {tab === 2 && <ChecklistTab type={type}/>}
+      </div>
+    </main>
+  );
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+
+function Sidebar({ types, selected, onSelect, bookmarks }) {
+  const [query, setQuery]                     = React.useState('');
+  const [prevBookmarks, setPrevBookmarks]     = React.useState(bookmarks);
+  const [newlyBookmarked, setNewlyBookmarked] = React.useState(new Set());
+
+  React.useEffect(() => {
+    const added = bookmarks.filter(id => !prevBookmarks.includes(id));
+    if (added.length > 0) {
+      setNewlyBookmarked(new Set(added));
+      setTimeout(() => setNewlyBookmarked(new Set()), 700);
+    }
+    setPrevBookmarks(bookmarks);
+  }, [bookmarks]);
+
+  const filtered = types.filter(t => {
+    const q = query.toLowerCase();
+    return !q || t.zhName.includes(q) || t.enName.toLowerCase().includes(q)
+      || t.pinyin.toLowerCase().includes(q) || t.char.includes(q);
+  });
+
+  const bookmarked = filtered.filter(t => bookmarks.includes(t.id));
+  const rest       = filtered.filter(t => !bookmarks.includes(t.id));
+
+  const renderItem = (t, inBmSection) => {
+    const isActive = selected?.id === t.id;
+    const isNew    = inBmSection && newlyBookmarked.has(t.id);
+    return (
+      <button
+        key={t.id}
+        onClick={() => onSelect(t)}
+        className={`sidebar-btn${isNew ? ' bm-enter' : ''}`}
+        style={{
+          width:'100%', display:'flex', alignItems:'center', gap:11,
+          padding:'9px 10px', marginBottom:2,
+          border:'none', borderRadius:8,
+          background: isActive ? C.paper : 'transparent',
+          cursor:'pointer', textAlign:'left',
+          boxShadow: isActive ? '0 1px 4px rgba(28,20,16,0.08)' : 'none',
+          transition:'background 0.15s',
+        }}>
+        <SealStamp char={t.char} color={isActive ? t.color : C.umber} size={34}/>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontFamily:"'Noto Serif SC',serif", fontSize:13.5, fontWeight: isActive ? 600 : 400, color: isActive ? t.color : C.ink }}>{t.zhName}</div>
+          <div style={{ fontSize:10.5, color:C.muted }}>{t.enName}</div>
+        </div>
+        {isActive && <div style={{ width:3, height:18, background:t.color, borderRadius:2, flexShrink:0 }}/>}
+      </button>
+    );
+  };
+
+  return (
+    <aside style={{ width:'22%', minWidth:180, maxWidth:300, height:'100%', background:C.silk, borderRight:`1px solid ${C.border}`, display:'flex', flexDirection:'column', flexShrink:0, overflow:'hidden' }}>
+      {/* Logo */}
+      <div style={{ padding:'22px 18px 14px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3 }}>
+          <div style={{ width:7, height:7, background:C.red, transform:'rotate(45deg)' }}/>
+          <span style={{ fontFamily:"'Noto Serif SC',serif", fontSize:13, fontWeight:600, color:C.umber, letterSpacing:'0.05em' }}>文体指南</span>
+        </div>
+        <p style={{ fontSize:10, color:C.muted, paddingLeft:15 }}>IB Mandarin Ab Initio</p>
+      </div>
+
+      {/* Search */}
+      <div style={{ padding:'0 12px 12px' }}>
+        <div style={{ position:'relative' }}>
+          <span style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', fontSize:13, color:C.muted, pointerEvents:'none' }}>⌕</span>
+          <input
+            value={query} onChange={e => setQuery(e.target.value)}
+            placeholder="Search 搜索…"
+            style={{
+              width:'100%', padding:'8px 28px 8px 28px',
+              border:`1px solid ${C.border}`, borderRadius:8,
+              background:C.paper, color:C.ink, fontSize:12.5,
+              fontFamily:"'DM Sans',sans-serif", outline:'none',
+            }}
+          />
+          {query && (
+            <button onClick={() => setQuery('')} style={{
+              position:'absolute', right:8, top:'50%', transform:'translateY(-50%)',
+              border:'none', background:'transparent', cursor:'pointer', color:C.muted, fontSize:14, padding:2,
+            }}>×</button>
+          )}
+        </div>
+      </div>
+
+      {/* List */}
+      <div style={{ flex:1, minHeight:0, overflowY:'auto', padding:'0 10px 16px' }}>
+        {bookmarked.length > 0 && (
+          <>
+            <p style={{ fontSize:10, color:C.muted, letterSpacing:'0.08em', textTransform:'uppercase', paddingLeft:10, marginBottom:6 }}>★ Bookmarked</p>
+            {bookmarked.map(t => renderItem(t, true))}
+            <div style={{ height:1, background:C.border, margin:'10px 2px' }}/>
+          </>
+        )}
+        <p style={{ fontSize:10, color:C.muted, letterSpacing:'0.08em', textTransform:'uppercase', paddingLeft:10, marginBottom:6 }}>
+          {bookmarked.length > 0 ? 'All Types' : 'Text Types · 文体'}
+        </p>
+        {rest.length === 0 && bookmarked.length === 0 && (
+          <p style={{ fontSize:12, color:C.muted, paddingLeft:10, fontStyle:'italic' }}>No results</p>
+        )}
+        {rest.map(t => renderItem(t, false))}
+      </div>
+    </aside>
+  );
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [selected, setSelected]   = React.useState(TEXT_TYPES[0]);
+  const [bookmarks, setBookmarks] = usePersist('bookmarks', []);
+
+  return (
+    <div style={{ height:'100%', display:'flex', flexDirection:'column' }}>
+      {/* Nav bar */}
+      <nav style={{ height:48, background:C.ink, display:'flex', alignItems:'center', padding:'0 24px', gap:14, flexShrink:0 }}>
+        <div style={{ width:5, height:20, background:C.red }}/>
+        <span style={{ fontFamily:"'Noto Serif SC',serif", fontSize:14, fontWeight:600, color:C.paper, letterSpacing:'0.05em' }}>文体指南</span>
+        <span style={{ fontSize:12, color:'#5a4a3a' }}>·</span>
+        <span style={{ fontSize:12, color:'#6a5a4a', letterSpacing:'0.03em' }}>IB Mandarin Ab Initio — Text Type Reference</span>
+        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:7 }}>
+          <div style={{ width:5, height:5, borderRadius:'50%', background:C.jade }}/>
+          <span style={{ fontSize:11, color:'#6a5a4a', fontFamily:"'DM Sans',sans-serif" }}>{TEXT_TYPES.length} text types</span>
+        </div>
+      </nav>
+
+      {/* Body */}
+      <div style={{ flex:1, minHeight:0, display:'flex', overflow:'hidden' }}>
+        <Sidebar types={TEXT_TYPES} selected={selected} onSelect={setSelected} bookmarks={bookmarks}/>
+        {selected && (
+          <MainContent
+            key={selected.id}
+            type={selected}
+            bookmarks={bookmarks}
+            setBookmarks={setBookmarks}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
