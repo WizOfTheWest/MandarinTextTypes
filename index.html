@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文体指南 — IB Mandarin Ab Initio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<!-- Text type data — edit ONLY this file to update content -->
+<script src="textTypes.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+// ─── Colour palette (mirrors CSS tokens for JS use) ──────────────────────────
+const C = {
+  ink:     '#1C1410',
+  paper:   '#F5EDD8',
+  silk:    '#E8DFC8',
+  red:     '#C0392B',
+  jade:    '#2E7D6B',
+  lacquer: '#8B1A1A',
+  umber:   '#4A3728',
+  gold:    '#D4AC0D',
+  muted:   '#9a8a78',
+  border:  '#d4c9b0',
+};
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
+
+function usePersist(key, def) {
+  const [val, setVal] = React.useState(() => {
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; }
+  });
+  const set = v => { setVal(v); try { localStorage.setItem(key, JSON.stringify(v)); } catch {} };
+  return [val, set];
+}
+
+function buildPlainText(layout) {
+  if (!layout) return '';
+  return layout.map(line => {
+    if (line.k === 'blank')   return '';
+    if (line.k === 'divider') return '─────────────────────';
+    if (line.k === '3col')    return `${line.l}\t\t${line.c}\t\t${line.r}`;
+    if (line.k === 'right')   return line.t;
+    if (line.k === 'center')  return line.t;
+    if (line.k === 'indent')  return `　　${line.t}`;
+    if (line.k === 'field')   return `${line.label}${line.t}`;
+    if (line.k === 'bullet')  return `★ ${line.t}`;
+    if (line.k === 'qa')      return `${line.role}：${line.t}`;
+    return line.t || '';
+  }).join('\n');
+}
+
+// ─── CopyBtn ─────────────────────────────────────────────────────────────────
+
+function copyText(text) {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  legacyCopy(text);
+  return Promise.resolve();
+}
+
+function legacyCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch {}
+  document.body.removeChild(ta);
+}
+
+function CopyBtn({ text, color, small }) {
+  const [copied, setCopied] = React.useState(false);
+  const handle = () => {
+    copyText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  };
+  const sz = small ? 15 : 18;
+  return (
+    <button
+      onClick={handle}
+      className="copy-btn"
+      title="Copy to clipboard"
+      style={{
+        border: 'none',
+        background: copied ? `${color}18` : 'transparent',
+        cursor: 'pointer',
+        padding: small ? '4px 8px' : '6px 11px',
+        borderRadius: 6,
+        display: 'flex', alignItems: 'center', gap: 5,
+        color: copied ? color : C.muted,
+        transition: 'color 0.2s, background 0.2s',
+        flexShrink: 0,
+      }}
+    >
+      {copied ? (
+        <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      ) : (
+        <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      )}
+      <span style={{ fontSize: small ? 10.5 : 12, fontWeight: 500 }}>{copied ? 'Copied!' : 'Copy'}</span>
+    </button>
+  );
+}
+
+// ─── SealStamp ───────────────────────────────────────────────────────────────
+
+function SealStamp({ char, color, size = 52 }) {
+  return (
+    <div style={{
+      width: size, height: size,
+      border: `2px solid ${color}`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexShrink: 0,
+    }}>
+      <span style={{ fontFamily: "'Noto Serif SC',serif", fontSize: size * 0.48, fontWeight: 700, color, lineHeight: 1 }}>{char}</span>
+    </div>
+  );
+}
+
+// ─── Structured example renderer ─────────────────────────────────────────────
+
+function ExampleLine({ line, color }) {
+  const base = {
+    fontFamily: "'Noto Serif SC',serif",
+    fontSize: 14, lineHeight: 2.0, color: C.ink,
+  };
+  if (line.k === 'blank')   return <div style={{ height: '0.45em' }}/>;
+  if (line.k === 'divider') return <hr style={{ border: 'none', borderTop: `1px solid ${C.border}`, margin: '8px 0' }}/>;
+  if (line.k === '3col') return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', position: 'relative' }}>
+      <span style={base}>{line.l}</span>
+      <span style={{ ...base, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>{line.c}</span>
+      <span style={base}>{line.r}</span>
+    </div>
+  );
+  if (line.k === 'right')  return <div style={{ textAlign: 'right' }}><span style={base}>{line.t}</span></div>;
+  if (line.k === 'center') return <div style={{ textAlign: 'center' }}><span style={base}>{line.t}</span></div>;
+  if (line.k === 'indent') return <div style={{ paddingLeft: '2em' }}><span style={base}>{line.t}</span></div>;
+  if (line.k === 'field')  return (
+    <div style={{ display: 'flex' }}>
+      <span style={{ ...base, color: C.muted, flexShrink: 0, whiteSpace: 'nowrap' }}>{line.label}</span>
+      <span style={base}>{line.t}</span>
+    </div>
+  );
+  if (line.k === 'bullet') return (
+    <div style={{ display: 'flex', gap: 8, paddingLeft: '1em', alignItems: 'baseline' }}>
+      <span style={{ color, fontSize: 11, flexShrink: 0 }}>★</span>
+      <span style={base}>{line.t}</span>
+    </div>
+  );
+  if (line.k === 'qa') return (
+    <div style={{ display: 'flex', gap: 6 }}>
+      <span style={{ ...base, fontWeight: 600, color: line.isQ ? color : C.umber, flexShrink: 0, whiteSpace: 'nowrap' }}>{line.role}：</span>
+      <span style={base}>{line.t}</span>
+    </div>
+  );
+  if (line.k === 'stats') return (
+    <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', paddingTop: 12, marginTop: 10, borderTop: `1px solid ${C.border}` }}>
+      {[['♥', line.likes, 'Likes'], ['💬', line.comments, 'Comments'], ['↗', line.shares, 'Shares'], ['◎', line.views, 'Views']].map(([icon, count, label]) => (
+        <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+          <span style={{ fontSize: 15, color }}>{icon}</span>
+          <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: C.ink }}>{count.toLocaleString()}</span>
+          <span style={{ fontSize: 10, color: C.muted, letterSpacing: '0.03em' }}>{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+  return <div><span style={base}>{line.t}</span></div>;
+}
+
+// ─── ExampleTab ──────────────────────────────────────────────────────────────
+
+function ExampleTab({ type }) {
+  const [showRules, setShowRules] = React.useState(false);
+  const plainText = buildPlainText(type.layout);
+  const rules = type.formatRules || [];
+
+  return (
+    <div>
+      {/* Toolbar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+        <button
+          onClick={() => setShowRules(!showRules)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '6px 14px', border: `1px solid ${C.border}`,
+            borderRadius: 20, background: showRules ? type.color : C.paper,
+            color: showRules ? C.paper : C.muted,
+            cursor: 'pointer', fontSize: 12, fontWeight: 500, transition: 'all 0.2s',
+          }}
+        >
+          <span style={{ fontSize: 13 }}>格</span>
+          {showRules ? 'Hide format rules' : 'Show format rules'}
+        </button>
+        <CopyBtn text={plainText} color={type.color}/>
+      </div>
+
+      {/* Example layout */}
+      <div style={{
+        background: C.paper,
+        border: `1px solid ${C.border}`,
+        borderRadius: 6,
+        padding: '20px 24px',
+        marginBottom: 12,
+        position: 'relative',
+      }}>
+        {type.layout.map((line, i) => (
+          <ExampleLine key={i} line={line} color={type.color}/>
+        ))}
+      </div>
+
+      {/* Format rules overlay */}
+      {showRules && (
+        <div style={{
+          background: C.silk,
+          border: `1px solid ${C.border}`,
+          borderRadius: 6,
+          padding: '14px 18px',
+          marginBottom: 12,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: type.color }}>Format Rules</span>
+          </div>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {rules.map((r, i) => (
+              <li key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                <span style={{ color: type.color, fontSize: 10, flexShrink: 0, marginTop: 3 }}>▸</span>
+                <span style={{ fontSize: 12.5, color: C.umber, lineHeight: 1.6 }}>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <p style={{ marginTop: 10, fontSize: 11.5, color: C.muted, fontStyle: 'italic' }}>
+        Illustrative example at Ab Initio level — adapt content and vocabulary to your own context.
+      </p>
+    </div>
+  );
+}
+
+// ─── PhrasesTab ──────────────────────────────────────────────────────────────
+
+function PhrasesTab({ type }) {
+  const [showPinyin, setShowPinyin] = usePersist('pinyin', true);
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+        <p style={{ fontSize: 13, color: C.muted }}>Common sentence starters for {type.enName.toLowerCase()}s.</p>
+        <button onClick={() => setShowPinyin(!showPinyin)} style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          padding: '6px 14px', border: `1px solid ${C.border}`,
+          borderRadius: 20, background: showPinyin ? type.color : C.paper,
+          color: showPinyin ? C.paper : C.muted,
+          cursor: 'pointer', fontSize: 12, fontWeight: 500, transition: 'all 0.2s',
+        }}>
+          <span style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 13 }}>拼</span>
+          {showPinyin ? 'Hide pinyin' : 'Show pinyin'}
+        </button>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 580 }}>
+        {type.phrases.map((p, i) => (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'stretch',
+            background: C.paper, border: `1px solid ${C.border}`, borderRadius: 8, overflow: 'hidden',
+          }}>
+            <div style={{ background: type.color, width: 4, flexShrink: 0 }}/>
+            <div style={{ padding: '10px 14px', flex: 1 }}>
+              <div style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 15, fontWeight: 500, color: C.ink, marginBottom: 2 }}>{p.zh}</div>
+              {showPinyin && <div style={{ fontSize: 11.5, color: type.color, marginBottom: 2, letterSpacing: '0.02em' }}>{p.pinyin}</div>}
+              <div style={{ fontSize: 12.5, color: '#7a6a58', fontStyle: 'italic' }}>{p.en}</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', paddingRight: 6 }}>
+              <CopyBtn text={p.zh} color={type.color} small/>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── ChecklistTab ────────────────────────────────────────────────────────────
+
+function ChecklistTab({ type }) {
+  const [checked, setChecked] = usePersist(`cl-${type.id}`, {});
+  const total = type.checklist.length;
+  const done  = Object.values(checked).filter(Boolean).length;
+  const pct   = total ? Math.round((done / total) * 100) : 0;
+  const toggle = i => setChecked({ ...checked, [i]: !checked[i] });
+
+  return (
+    <div style={{ maxWidth: 520 }}>
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <span style={{ fontSize: 13, color: C.muted }}>Writing checklist — tick off as you go</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: done === total ? C.jade : C.muted }}>{done}/{total}</span>
+        </div>
+        <div style={{ height: 5, background: C.border, borderRadius: 3, overflow: 'hidden' }}>
+          <div style={{ width: `${pct}%`, height: '100%', background: done === total ? C.jade : type.color, borderRadius: 3, transition: 'width 0.3s ease' }}/>
+        </div>
+        {done === total && done > 0 && (
+          <p style={{ marginTop: 8, fontSize: 12.5, color: C.jade, fontWeight: 500 }}>✓ All items checked — great work!</p>
+        )}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {type.checklist.map((item, i) => (
+          <button key={i} onClick={() => toggle(i)} style={{
+            display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px',
+            background: checked[i] ? `${type.color}12` : C.paper,
+            border: `1.5px solid ${checked[i] ? type.color : C.border}`,
+            borderRadius: 8, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s',
+          }}>
+            <div style={{
+              width: 22, height: 22, borderRadius: 5, flexShrink: 0,
+              border: `2px solid ${checked[i] ? type.color : C.border}`,
+              background: checked[i] ? type.color : 'transparent',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
+            }}>
+              {checked[i] && <span style={{ color: C.paper, fontSize: 12, fontWeight: 700, lineHeight: 1 }}>✓</span>}
+            </div>
+            <div>
+              <span style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 13, fontWeight: 600, color: checked[i] ? type.color : C.ink, marginRight: 8 }}>{item.zh}</span>
+              <span style={{ fontSize: 13, color: checked[i] ? C.muted : C.umber, textDecoration: checked[i] ? 'line-through' : 'none' }}>{item.en}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+      {done > 0 && (
+        <button onClick={() => setChecked({})} style={{
+          marginTop: 14, padding: '7px 16px', border: `1px solid ${C.border}`,
+          borderRadius: 6, background: 'transparent', cursor: 'pointer', fontSize: 12, color: C.muted,
+        }}>Reset checklist</button>
+      )}
+    </div>
+  );
+}
+
+// ─── MainContent ─────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: 'example',   label: '示例', en: 'Example'   },
+  { id: 'phrases',   label: '句型', en: 'Phrases'   },
+  { id: 'checklist', label: '清单', en: 'Checklist' },
+];
+
+function MainContent({ type, bookmarks, setBookmarks }) {
+  const [tab, setTab]           = React.useState(0);
+  const [starAnim, setStarAnim] = React.useState(false);
+  React.useEffect(() => { setTab(0); }, [type.id]);
+
+  const isBookmarked = bookmarks.includes(type.id);
+
+  const toggleBookmark = () => {
+    setStarAnim(true);
+    setTimeout(() => setStarAnim(false), 600);
+    setBookmarks(isBookmarked
+      ? bookmarks.filter(b => b !== type.id)
+      : [...bookmarks, type.id]
+    );
+  };
+
+  return (
+    <main style={{ flex: 1, minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{ padding: '26px 40px 0', borderBottom: `1px solid ${C.border}`, background: C.paper }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 20 }}>
+          <SealStamp char={type.char} color={type.color} size={60}/>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+                <h1 style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 30, fontWeight: 700, color: C.ink, lineHeight: 1.1 }}>{type.zhName}</h1>
+                <span style={{ fontSize: 13.5, color: C.muted }}>{type.pinyin}</span>
+              </div>
+              {/* Star bookmark */}
+              <button
+                onClick={toggleBookmark}
+                className={starAnim ? 'star-pop' : ''}
+                title={isBookmarked ? 'Remove bookmark' : 'Bookmark this text type'}
+                style={{
+                  border: 'none', background: 'transparent', cursor: 'pointer',
+                  fontSize: 28, lineHeight: 1, padding: '2px 4px',
+                  color: isBookmarked ? C.gold : C.border,
+                  transition: 'color 0.3s',
+                  display: 'inline-block',
+                }}
+              >
+                {isBookmarked ? '★' : '☆'}
+              </button>
+            </div>
+            <p style={{ fontSize: 15, color: type.color, marginTop: 2, fontWeight: 500 }}>{type.enName}</p>
+            <p style={{ fontSize: 12.5, color: C.muted, marginTop: 3 }}>{type.tagline}</p>
+          </div>
+        </div>
+        {/* Tab bar */}
+        <div style={{ display: 'flex' }}>
+          {TABS.map((t, i) => (
+            <button key={i} onClick={() => setTab(i)} style={{
+              padding: '9px 22px', border: 'none', background: 'transparent', cursor: 'pointer',
+              fontFamily: "'Noto Serif SC',serif", fontSize: 13.5,
+              color: tab === i ? type.color : C.muted,
+              fontWeight: tab === i ? 600 : 400,
+              borderBottom: tab === i ? `2px solid ${type.color}` : '2px solid transparent',
+              transition: 'all 0.15s', marginBottom: -1,
+            }}>
+              {t.label}
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, marginLeft: 4, opacity: 0.7 }}>{t.en}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tab content */}
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '28px 40px' }}>
+        {tab === 0 && <ExampleTab   type={type}/>}
+        {tab === 1 && <PhrasesTab   type={type}/>}
+        {tab === 2 && <ChecklistTab type={type}/>}
+      </div>
+    </main>
+  );
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+
+function Sidebar({ types, selected, onSelect, bookmarks }) {
+  const [query, setQuery]                     = React.useState('');
+  const [prevBookmarks, setPrevBookmarks]     = React.useState(bookmarks);
+  const [newlyBookmarked, setNewlyBookmarked] = React.useState(new Set());
+
+  React.useEffect(() => {
+    const added = bookmarks.filter(id => !prevBookmarks.includes(id));
+    if (added.length > 0) {
+      setNewlyBookmarked(new Set(added));
+      setTimeout(() => setNewlyBookmarked(new Set()), 700);
+    }
+    setPrevBookmarks(bookmarks);
+  }, [bookmarks]);
+
+  const filtered = types.filter(t => {
+    const q = query.toLowerCase();
+    return !q || t.zhName.includes(q) || t.enName.toLowerCase().includes(q)
+      || t.pinyin.toLowerCase().includes(q) || t.char.includes(q);
+  });
+
+  const bookmarked = filtered.filter(t => bookmarks.includes(t.id));
+  const rest       = filtered.filter(t => !bookmarks.includes(t.id));
+
+  const renderItem = (t, inBmSection) => {
+    const isActive = selected?.id === t.id;
+    const isNew    = inBmSection && newlyBookmarked.has(t.id);
+    return (
+      <button
+        key={t.id}
+        onClick={() => onSelect(t)}
+        className={`sidebar-btn${isNew ? ' bm-enter' : ''}`}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 11,
+          padding: '9px 10px', marginBottom: 2,
+          border: 'none', borderRadius: 8,
+          background: isActive ? C.paper : 'transparent',
+          cursor: 'pointer', textAlign: 'left',
+          boxShadow: isActive ? '0 1px 4px rgba(28,20,16,0.08)' : 'none',
+          transition: 'background 0.15s',
+        }}>
+        <SealStamp char={t.char} color={isActive ? t.color : C.umber} size={34}/>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 13.5, fontWeight: isActive ? 600 : 400, color: isActive ? t.color : C.ink }}>{t.zhName}</div>
+          <div style={{ fontSize: 10.5, color: C.muted }}>{t.enName}</div>
+        </div>
+        {isActive && <div style={{ width: 3, height: 18, background: t.color, borderRadius: 2, flexShrink: 0 }}/>}
+      </button>
+    );
+  };
+
+  return (
+    <aside style={{ width: '22%', minWidth: 180, maxWidth: 300, height: '100%', background: C.silk, borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', flexShrink: 0, overflow: 'hidden' }}>
+      {/* Logo */}
+      <div style={{ padding: '22px 18px 14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+          <div style={{ width: 7, height: 7, background: C.red, transform: 'rotate(45deg)' }}/>
+          <span style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 13, fontWeight: 600, color: C.umber, letterSpacing: '0.05em' }}>文体指南</span>
+        </div>
+        <p style={{ fontSize: 10, color: C.muted, paddingLeft: 15 }}>IB Mandarin Ab Initio</p>
+      </div>
+
+      {/* Search */}
+      <div style={{ padding: '0 12px 12px' }}>
+        <div style={{ position: 'relative' }}>
+          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 13, color: C.muted, pointerEvents: 'none' }}>⌕</span>
+          <input
+            value={query} onChange={e => setQuery(e.target.value)}
+            placeholder="Search 搜索…"
+            style={{
+              width: '100%', padding: '8px 28px 8px 28px',
+              border: `1px solid ${C.border}`, borderRadius: 8,
+              background: C.paper, color: C.ink, fontSize: 12.5,
+              fontFamily: "'DM Sans',sans-serif", outline: 'none',
+            }}
+          />
+          {query && (
+            <button onClick={() => setQuery('')} style={{
+              position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+              border: 'none', background: 'transparent', cursor: 'pointer', color: C.muted, fontSize: 14, padding: 2,
+            }}>×</button>
+          )}
+        </div>
+      </div>
+
+      {/* List */}
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '0 10px 16px' }}>
+        {bookmarked.length > 0 && (
+          <>
+            <p style={{ fontSize: 10, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 6 }}>★ Bookmarked</p>
+            {bookmarked.map(t => renderItem(t, true))}
+            <div style={{ height: 1, background: C.border, margin: '10px 2px' }}/>
+          </>
+        )}
+        <p style={{ fontSize: 10, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase', paddingLeft: 10, marginBottom: 6 }}>
+          {bookmarked.length > 0 ? 'All Types' : 'Text Types · 文体'}
+        </p>
+        {rest.length === 0 && bookmarked.length === 0 && (
+          <p style={{ fontSize: 12, color: C.muted, paddingLeft: 10, fontStyle: 'italic' }}>No results</p>
+        )}
+        {rest.map(t => renderItem(t, false))}
+      </div>
+    </aside>
+  );
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [selected, setSelected]   = React.useState(TEXT_TYPES[0]);
+  const [bookmarks, setBookmarks] = usePersist('bookmarks', []);
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* Nav bar */}
+      <nav style={{ height: 48, background: C.ink, display: 'flex', alignItems: 'center', padding: '0 24px', gap: 14, flexShrink: 0 }}>
+        <div style={{ width: 5, height: 20, background: C.red }}/>
+        <span style={{ fontFamily: "'Noto Serif SC',serif", fontSize: 14, fontWeight: 600, color: C.paper, letterSpacing: '0.05em' }}>文体指南</span>
+        <span style={{ fontSize: 12, color: '#5a4a3a' }}>·</span>
+        <span style={{ fontSize: 12, color: '#6a5a4a', letterSpacing: '0.03em' }}>IB Mandarin Ab Initio — Text Type Reference</span>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.jade }}/>
+          <span style={{ fontSize: 11, color: '#6a5a4a', fontFamily: "'DM Sans',sans-serif" }}>{TEXT_TYPES.length} text types</span>
+        </div>
+      </nav>
+
+      {/* Body */}
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
+        <Sidebar types={TEXT_TYPES} selected={selected} onSelect={setSelected} bookmarks={bookmarks}/>
+        {selected && (
+          <MainContent
+            key={selected.id}
+            type={selected}
+            bookmarks={bookmarks}
+            setBookmarks={setBookmarks}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
