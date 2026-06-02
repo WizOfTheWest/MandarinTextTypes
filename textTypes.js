@@ -225,7 +225,6 @@ const TEXT_TYPES = [
       'First line of each body paragraph indented 2 Chinese characters (2em)',
       'One blank line between paragraphs',
       'Issuing body right-aligned at bottom',
-      'Date right-aligned below issuing body: YYYY年MM月DD日',
     ],
     layout: [
       { k: 'right',  t: '中文办公室', note: 'Issuing org — right-aligned at top' },
@@ -241,8 +240,6 @@ const TEXT_TYPES = [
       { k: 'blank' },
       { k: 'indent', t: '参加活动的同学请穿校服，并准时到达。如有任何问题，请联系教务处。' },
       { k: 'blank' },
-      { k: 'right',  t: '学校教务处', note: 'Issuing body — right-aligned' },
-      { k: 'right',  t: '2026年4月19日', note: 'Date — right-aligned, below issuing body' },
     ],
     phrases: [
       { zh: '现将有关事项通知如下', pinyin: 'Xiàn jiāng yǒuguān shìxiàng tōngzhī rúxià', en: 'The following matters are hereby announced' },
@@ -255,14 +252,15 @@ const TEXT_TYPES = [
       { zh: '敬请注意', pinyin: 'Jìng qǐng zhùyì', en: 'Please be advised' },
     ],
     checklist: [
+      { zh: '发布单位', en: 'Issuing body right-aligned' },
+      { zh: '日期', en: 'Date right-aligned below issuing body (YYYY年MM月DD日)' },
       { zh: '"通知"标题', en: '"通知" centered as heading' },
       { zh: '受众称呼', en: 'Who the notice is for — left-aligned (全体同学：)' },
       { zh: '内容', en: 'Clear details: what, when, where' },
       { zh: '正文缩进', en: 'Body paragraphs indented 2 characters' },
       { zh: '要求', en: 'What readers must do (请各位……)' },
       { zh: '联系方式', en: 'Contact info provided' },
-      { zh: '发布单位', en: 'Issuing body right-aligned' },
-      { zh: '日期', en: 'Date right-aligned below issuing body (YYYY年MM月DD日)' },
+
     ],
   },
 
